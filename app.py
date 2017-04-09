@@ -10,6 +10,24 @@ app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.config['MYSQL_DATABASE_PORT'] = 3306
 mysql.init_app(app)
 
+#schema user: (username, password, access, fk_id). PK: (username,password)
+@app.route("/login")
+def login():
+    username = request.args['username']
+    password = request.args['password']
+    conn = mysql.connect()
+    cursor =conn.cursor()
+    query = "SELECT * FROM user WHERE username = {} AND password = {}".format(username,password)
+    cursor.execute(query)
+    data = cursor.fetchone()
+    if data[2] == 'student':
+        return render_template('student.html',data)
+    elif data[2] == 'teacher':
+        return render_template('teacher.html',data)
+    else:
+        return render_template('admin.html',data)
+
+
 @app.route("/") #asking the user for dates
 def index():
     conn = mysql.connect()
