@@ -4,7 +4,7 @@
   <title>CS425 Project</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width-device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://adityaparakh.000webhostapp.com/bootstrap.min.css" >
+  <link rel="stylesheet" href="css/bootstrap.min.css" >
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   
 <style>
@@ -109,12 +109,12 @@
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>ISBN #</th>
-              <th>Course</th>
-              <th>Check Out Date</th>
-              <th>Due Date</th>
-              <th>Cost to Replace</th>
+              <th class="col-sm-3">Name</th>
+              <th class="col-sm-1">ISBN #</th>
+              <th class="col-sm-1">Course</th>
+              <th class="col-sm-1">Check Out Date</th>
+              <th class="col-sm-1">Due Date</th>
+              <th class="col-sm-2">Cost to Replace</th>
             </tr>
           </thead>
           <tbody>
@@ -124,7 +124,42 @@
               <th>CS 430</th>
               <th>Aug-13-2016</th>
               <th>Dec-22-2016</th>
-              <th>$100.00</th>
+              <th>$100.00<button type="submit" class="btn btn-default pull-right">Return</button></th>
+            </tr>
+          </tbody>
+        </table>
+        
+        <h3>Available Books</h3>
+        <p>The following books are available for checkout from your account</p>
+        <!--
+        <form class="form-inline">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Enter Book Name"> 
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+        -->
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th class="col-sm-3">Name</th>
+              <th class="col-sm-1">ISBN #</th>
+              <th class="col-sm-1">Course</th>
+              <th class="col-sm-1">Check Out Date</th>
+              <th class="col-sm-1">Due Date</th>
+              <th class="col-sm-2">Cost to Replace</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <th>Name</th>
+              <th>ISBN #</th>
+              <th>Course</th>
+              <th>Check Out Date</th>
+              <th>Due Date</th>
+              <th>Cost to Replace<button type="submit" class="btn btn-default pull-right">Borrow</button></th>
+              <!--Student will be able to only borrow books that have been assigned-->
             </tr>
           </tbody>
         </table>
@@ -139,11 +174,11 @@
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
-              <th>Book Name</th>
-              <th>ISBN #</th>
-              <th>Course</th>
-              <th>Due Date</th>
-              <th>Amount Due</th>
+              <th class="col-sm-4">Book Name</th>
+              <th class="col-sm-1">ISBN #</th>
+              <th class="col-sm-2">Course</th>
+              <th class="col-sm-1">Due Date</th>
+              <th class="col-sm-2">Amount Due</th>
             </tr>  
           </thead>
           <tbody>
@@ -152,14 +187,14 @@
               <th>002-1156-2275</th>
               <th>World History</th>
               <th>May-22-2016</th>
-              <th>$89.99</th>
+              <th>$89.99<button type="submit" class="btn btn-default pull-right">Return</button></th>
             </tr>
             <tr>
               <th></th>
               <th></th>
               <th></th>
-              <th></th>
               <th>Total DUE:</th>
+              <th></th>
             </tr>
           </tbody>
         </table>
