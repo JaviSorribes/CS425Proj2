@@ -4,22 +4,38 @@
 */
 USE library;
 
-INSERT INTO admin (firstname,lastname) VALUES ('Javier','Sorribes');
-INSERT INTO admin (firstname,lastname) VALUES ('Eldon','Nakagawa');
-INSERT INTO admin (firstname,lastname) VALUES ('Ricky','Nguyen');
-INSERT INTO admin (firstname,lastname) VALUES ('Aditya','Parakh');
+INSERT INTO users (username,userpass,role) VALUES ('jsorribes','javier',1);
+INSERT INTO users (username,userpass,role) VALUES ('enakagawa','eldon',1);
+INSERT INTO users (username,userpass,role) VALUES ('rnguyen','ricky',1);
+INSERT INTO users (username,userpass,role) VALUES ('aparakh','aditya',1);
+INSERT INTO users (username,userpass,role) VALUES ('pgarcia','pepe',2);
+INSERT INTO users (username,userpass,role) VALUES ('oaldawud','omar',2);
+INSERT INTO users (username,userpass,role) VALUES ('xyi','xue',2);
+INSERT INTO users (username,userpass,role) VALUES ('kvladilkov','kristoff',2);
+INSERT INTO users (username,userpass,role) VALUES ('mmichelson','mike',3);
+INSERT INTO users (username,userpass,role) VALUES ('sstevenson','steve',3);
+INSERT INTO users (username,userpass,role) VALUES ('ppeterson','peter',3);
+INSERT INTO users (username,userpass,role) VALUES ('ssue','suzanne',3);
+INSERT INTO users (username,userpass,role) VALUES ('jcorrales','jarvin',3);
+INSERT INTO users (username,userpass,role) VALUES ('apatel','ashkosh',3);
 
-INSERT INTO teacher (firstname,lastname) VALUES ('Pepe','Garcia');
-INSERT INTO teacher (firstname,lastname) VALUES ('Omar','Aldawud');
-INSERT INTO teacher (firstname,lastname) VALUES ('Xue','Yi');
-INSERT INTO teacher (firstname,lastname) VALUES ('Kristoff','Vladilkov');
 
-INSERT INTO student (firstname,lastname,advisorid) VALUES ('Mike','Michelson',1);
-INSERT INTO student (firstname,lastname,advisorid) VALUES ('Steve','Stevenson',1);
-INSERT INTO student (firstname,lastname,advisorid) VALUES ('Peter','Peterson',2);
-INSERT INTO student (firstname,lastname,advisorid) VALUES ('Suzanne','Sue',2);
-INSERT INTO student (firstname,lastname,advisorid) VALUES ('Jarvin','Corrales',2);
-INSERT INTO student (firstname,lastname,advisorid) VALUES ('Ashkosh','Patel',4);
+INSERT INTO admin (username,firstname,lastname) VALUES ('jsorribes','Javier','Sorribes');
+INSERT INTO admin (username,firstname,lastname) VALUES ('enakagawa','Eldon','Nakagawa');
+INSERT INTO admin (username,firstname,lastname) VALUES ('rnguyen','Ricky','Nguyen');
+INSERT INTO admin (username,firstname,lastname) VALUES ('aparakh','Aditya','Parakh');
+
+INSERT INTO teacher (username,firstname,lastname) VALUES ('pgarcia','Pepe','Garcia');
+INSERT INTO teacher (username,firstname,lastname) VALUES ('oaldawud','Omar','Aldawud');
+INSERT INTO teacher (username,firstname,lastname) VALUES ('xyi','Xue','Yi');
+INSERT INTO teacher (username,firstname,lastname) VALUES ('kvladilkov','Kristoff','Vladilkov');
+
+INSERT INTO student (username,firstname,lastname,advisorid) VALUES ('mmichelson','Mike','Michelson',1);
+INSERT INTO student (username,firstname,lastname,advisorid) VALUES ('sstevenson','Steve','Stevenson',1);
+INSERT INTO student (username,firstname,lastname,advisorid) VALUES ('ppeterson','Peter','Peterson',2);
+INSERT INTO student (username,firstname,lastname,advisorid) VALUES ('ssue','Suzanne','Sue',2);
+INSERT INTO student (username,firstname,lastname,advisorid) VALUES ('jcorrales','Jarvin','Corrales',2);
+INSERT INTO student (username,firstname,lastname,advisorid) VALUES ('apatel','Ashkosh','Patel',4);
 
 INSERT INTO parent (firstname,lastname) VALUES ('Onur','Tankre');
 INSERT INTO parent (firstname,lastname) VALUES ('Suzanne','Peters');
