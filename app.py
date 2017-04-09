@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template
-from flask.mysql import MySQL
+from flaskext.mysql import MySQL
 
 app = Flask(__name__)
 mysql = MySQL()
@@ -7,13 +7,14 @@ app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'pass'
 app.config['MYSQL_DATABASE_DB'] = 'library'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.config['MYSQL_DATABASE_PORT'] = 3306
 mysql.init_app(app)
 
 @app.route("/") #asking the user for dates
 def index():
     conn = mysql.connect()
     cursor =conn.cursor()
-    cursor.execute("SELECT * from User")
+    cursor.execute("SELECT * from admin")
     data = cursor.fetchone()
     print(data)
     print('kkkkk')
