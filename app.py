@@ -15,33 +15,36 @@ mysql.init_app(app)
 def login():
     username = request.args['username']
     password = request.args['password']
-    print(username)
-    print(password)
-    '''
     conn = mysql.connect()
     cursor =conn.cursor()
-    query = "SELECT * FROM user WHERE username = {} AND password = {}".format(username,password)
+    query = "SELECT * FROM users WHERE username = \"{}\" AND userpass = \"{}\"".format(username,password)
+    #print(query)
     cursor.execute(query)
     data = cursor.fetchone()
-    '''
-    if username == 'student':
-        return render_template('student.html')
-    elif username == 'teacher':
-        return render_template('teacher.html')
-    else:
-        return render_template('admin.html')
+    if data:
+        print(data[2])
+        if data[2] == 3:
+            return render_template('student.html')
+        elif data[2] == 2:
+            return render_template('teacher.html')
+        else:
+            return render_template('admin.html')
+
+    #USER DOESN'T EXIST SO JUST DISPLAY SAME PAGE AGAIN
+    return render_template('login.html')
 
 
 @app.route("/") #asking the user for dates
 def index():
     conn = mysql.connect()
     cursor =conn.cursor()
-    cursor.execute("SELECT * from admin")
+    cursor.execute("SELECT * from users")
     data = cursor.fetchone()
     print(data)
     print('kkkkk')
     for c in cursor:
-        print(c)
+        #print(c)
+        pass
     return render_template('login.html')
 
 if __name__ == '__main__':
