@@ -31,7 +31,7 @@ def login():
             return render_template('admin.html')
 
     #USER DOESN'T EXIST SO JUST DISPLAY SAME PAGE AGAIN
-    return render_template('login.html')
+    return render_template('error.html')
 
 
 @app.route("/") #asking the user for dates
@@ -40,8 +40,8 @@ def index():
     cursor =conn.cursor()
     cursor.execute("SELECT * from users")
     data = cursor.fetchone()
-    print(data)
-    print('kkkkk')
+    #print(data)
+    #print('kkkkk')
     for c in cursor:
         #print(c)
         pass
