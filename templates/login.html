@@ -1,113 +1,159 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>CS425 Project</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width-device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/bootstrap.min.css" >
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  
-<style>
-.jumbotron{
-  background-color:#29AB8D;
-  color:white;
-}  
-.jumbotron p{
-  color:black;
-  font-size: 40px;
-  text-align:left;
-  padding: 10px;
-}
-.tab-content{
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
-  padding: 10px;
-}
-.nav-tabs{
-  margin-bottom: 0;
-}
-.nav-tabs ul{
-  color:#0f0f0f;
-}
-.
-</style>
-</head>
-<body>
 
-<!--<div class="container">
-  <ul class="nav nav-tabs bg-info">
-    <li class="active"><a data-toggle="tab" href="#overview">Overview</a></li>
-    <li><a data-toggle="tab" href="#books">Your Books</a></li>
-    <li><a data-toggle="tab" href="#fees">Fees</a></li>
-    <li><a data-toggle="tab" href="#contact">Contact Us</a></li>
-    <li><a data-toggle="tab" href="#userInfo">User Info</a></li>
-  </ul>
-  <ul class="nav nav-tabs bg-info pull-right">
-    <li><a data-tobble="tab" href="#">Logout</a></li>
-  </ul>
-  <div class="tab-content">
-    <div id="overview" class="tab-pane fade in active">
-      <h3>Overview</h3>
-        <p>A brief summary of your account
-        </p>
-    </div>
-    <div id="books" class="tab-pane fade">
-      <h3>Your Books</h3>
-        <p>A brief summary of the books that you possess
-        </p>
-    </div>
-    <div id="fees" class="tab-pane fade">
-      <h3>Your Fees</h3>
-        <p>A brief summary of the balance that you owe
-        </p>
-    </div>
-    <div id="contact" class="tab-pane fade">
-      <h3>Your Books</h3>
-        <p>A list of some contacts that will be useful
-        </p>
-    </div>
-    <div id="userInfo" class="tab-pane fade">
-      <h3>Your Contact Information</h3>
-        <p>Verify that this information is correct
-        </p>
-    </div>
+
+<!DOCTYPE html>
+<html >
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" type="image/x-icon" href="https://production-assets.codepen.io/assets/favicon/favicon-8ea04875e70c4b0bb41da869e81236e54394d63638a1ef12fa558a4a835f1164.ico" />
+  <link rel="mask-icon" type="" href="https://production-assets.codepen.io/assets/favicon/logo-pin-f2d2b6d2c61838f7e76325261b7195c27224080bc099486ddd6dccb469b8e8e6.svg" color="#111" />
+  <title>CS 425 Project</title>
+  
+  
+  
+  
+      <style>
+      @import url(https://fonts.googleapis.com/css?family=Roboto:300);
+
+.login-page {
+  width: 360px;
+  padding: 8% 0 0;
+  margin: auto;
+}
+.form {
+  position: relative;
+  z-index: 1;
+  background: #FFFFFF;
+  max-width: 360px;
+  margin: 0 auto 100px;
+  padding: 45px;
+  text-align: center;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+.form input {
+  font-family: "Roboto", sans-serif;
+  outline: 0;
+  background: #f2f2f2;
+  width: 100%;
+  border: 0;
+  margin: 0 0 15px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+.form button {
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase;
+  outline: 0;
+  background: #4CAF50;
+  width: 100%;
+  border: 0;
+  padding: 15px;
+  color: #FFFFFF;
+  font-size: 14px;
+  -webkit-transition: all 0.3 ease;
+  transition: all 0.3 ease;
+  cursor: pointer;
+}
+.form button:hover,.form button:active,.form button:focus {
+  background: #43A047;
+}
+.form .message {
+  margin: 15px 0 0;
+  color: #b3b3b3;
+  font-size: 12px;
+}
+.form .message a {
+  color: #4CAF50;
+  text-decoration: none;
+}
+.form .register-form {
+  display: none;
+}
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 300px;
+  margin: 0 auto;
+}
+.container:before, .container:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+.container .info {
+  margin: 50px auto;
+  text-align: center;
+}
+.container .info h1 {
+  margin: 0 0 15px;
+  padding: 0;
+  font-size: 36px;
+  font-weight: 300;
+  color: #1a1a1a;
+}
+.container .info span {
+  color: #4d4d4d;
+  font-size: 12px;
+}
+.container .info span a {
+  color: #000000;
+  text-decoration: none;
+}
+.container .info span .fa {
+  color: #EF3B3A;
+}
+body {
+  background: #76b852; /* fallback for old browsers */
+  background: -webkit-linear-gradient(right, #76b852, #8DC26F);
+  background: -moz-linear-gradient(right, #76b852, #8DC26F);
+  background: -o-linear-gradient(right, #76b852, #8DC26F);
+  background: linear-gradient(to left, #76b852, #8DC26F);
+  font-family: "Roboto", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;      
+}
+    </style>
+
+  <script>
+  window.console = window.console || function(t) {};
+</script>
+
+  
+  
+  <script>
+  if (document.location.search.match(/type=embed/gi)) {
+    window.parent.postMessage("resize", "*");
+  }
+</script>
+
+</head>
+
+<body translate="no" >
+
+  <div class="login-page">
+  <div class="form">
+    <form action="/login" class="login-form">
+      <input class="forminput" type="text" name="username" placeholder="username" required>
+      <input class="forminput" type="password" name="password" placeholder="password" required>
+      <input class="formbutton" type="Submit">
+    </form>
   </div>
 </div>
--->
-<!--
-<div class="container" style="padding:0px">
-  <nav class="navbar bg-info">
-    <p></p>
-  </nav>   
-</div>
--->
-<div class="row">
-  <div class="container" style="text-align:center">
-    <h2>Welcome Students, Parents and Faculty</h2>
-    <p>You can check out books, return books and manage fees through this website</p>
-  </div>
-  <div class="col-sm-4 col-sm-offset-4 col-xs-10 col-xs-offset-1 bg-info" 
-      style="border-radius:10px; 
-            margin-top:50px;
-            margin-bottom:0px;
-            padding:10px 10px 0px 10px">
-    
-    <div class="form-group" style="text-align:center">
-      <label for="usr">Username</label>
-      <input type="text" class="form-control" id="usr" placeholder="Username">
-    </div>
-    <div class="form-group" style="text-align:center">
-      <label for="pwd">Password</label>
-      <input type="password" class="form-control" id="pwd" placeholder="Password">
-    </div>
-    
-    <a href="#" class="btn btn-info btn-block">Login</a>
-    <br>
-    <p><em>Not a user? Sign up <a href="registration.html">here:</a></em></p>
-  </div>                                                                 
-</div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
+    <script src="//production-assets.codepen.io/assets/common/stopExecutionOnTimeout-b2a7b3fe212eaa732349046d8416e00a9dec26eb7fd347590fbced3ab38af52e.js"></script>
+
+  <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+
+    <script>
+    $('.message a').click(function(){
+   $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
+});
+  //# sourceURL=pen.js
+  </script>
+
+  
+  
+
 </body>
 </html>
+ 

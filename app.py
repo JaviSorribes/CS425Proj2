@@ -15,17 +15,21 @@ mysql.init_app(app)
 def login():
     username = request.args['username']
     password = request.args['password']
+    print(username)
+    print(password)
+    '''
     conn = mysql.connect()
     cursor =conn.cursor()
     query = "SELECT * FROM user WHERE username = {} AND password = {}".format(username,password)
     cursor.execute(query)
     data = cursor.fetchone()
-    if data[2] == 'student':
-        return render_template('student.html',data)
-    elif data[2] == 'teacher':
-        return render_template('teacher.html',data)
+    '''
+    if username == 'student':
+        return render_template('student.html')
+    elif username == 'teacher':
+        return render_template('teacher.html')
     else:
-        return render_template('admin.html',data)
+        return render_template('admin.html')
 
 
 @app.route("/") #asking the user for dates
