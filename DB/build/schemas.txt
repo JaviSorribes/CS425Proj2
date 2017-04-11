@@ -1,0 +1,11 @@
+schemas = { 'user': ['username', 'userpass', 'role'],
+	'admin': ['username', 'adminid', 'lastname', 'firstname'],
+	'teacher': ['username', 'teacherid', 'lastname', 'firstname'],
+	'student': ['username', 'studentid', 'firstname', 'lastname', 'amountdue', 'advisorid'],
+	'parent': ['lastname', 'firstname'],
+	'parent_contact': ['contact', 'lastname', 'firstname'],
+	'course': ['name', 'year', 'semester', 'teacherid'],
+	'book': ['bookid', 'isbn', 'cost', 'duedate', 'datecheckedout', 'orderbytype', 'title', 'coursename', 'courseyear', 'coursesemester', 'studentid'],
+	'has': ['studentid', 'lastname', 'firstname'],
+	'takes': ['studentid', 'name', 'year', 'semester'],
+	'controls': ['adminid', 'bookid'] }

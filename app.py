@@ -10,6 +10,19 @@ app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.config['MYSQL_DATABASE_PORT'] = 3306
 mysql.init_app(app)
 
+#our database's schemas
+schemas = { 'user': ['username', 'userpass', 'role'],
+	'admin': ['username', 'adminid', 'lastname', 'firstname'],
+	'teacher': ['username', 'teacherid', 'lastname', 'firstname'],
+	'student': ['username', 'studentid', 'firstname', 'lastname', 'amountdue', 'advisorid'],
+	'parent': ['lastname', 'firstname'],
+	'parent_contact': ['contact', 'lastname', 'firstname'],
+	'course': ['name', 'year', 'semester', 'teacherid'],
+	'book': ['bookid', 'isbn', 'cost', 'duedate', 'datecheckedout', 'orderbytype', 'title', 'coursename', 'courseyear', 'coursesemester', 'studentid'],
+	'has': ['studentid', 'lastname', 'firstname'],
+	'takes': ['studentid', 'name', 'year', 'semester'],
+	'controls': ['adminid', 'bookid'] }
+
 #schema user: (username, password, access, fk_id). PK: (username,password)
 @app.route("/login")
 def login():
@@ -18,7 +31,6 @@ def login():
     conn = mysql.connect()
     cursor =conn.cursor()
     query = "SELECT * FROM user WHERE username = \"{}\" AND userpass = \"{}\"".format(username,password)
-    #print(query)
     cursor.execute(query)
     data = cursor.fetchone()
     if data:
@@ -36,14 +48,6 @@ def login():
 
 @app.route("/") #asking the user for dates
 def index():
-    #conn = mysql.connect()
-    #cursor =conn.cursor()
-    #cursor.execute("SELECT * from users")
-    #data = cursor.fetchone()
-    #print(data)
-    #print('kkkkk')
-    #for c in cursor:
-        #print(c)
     return render_template('login.html')
 
 if __name__ == '__main__':
