@@ -1,5 +1,5 @@
 schemas = []
-with open('genesis.sql','r') as f:
+with open('build/genesis.sql','r') as f:
     line = f.readline()
     while line:
         if 'CREATE TABLE' in line:
