@@ -4,20 +4,20 @@
 */
 USE library;
 
-INSERT INTO users (username,userpass,role) VALUES ('jsorribes','javier',1);
-INSERT INTO users (username,userpass,role) VALUES ('enakagawa','eldon',1);
-INSERT INTO users (username,userpass,role) VALUES ('rnguyen','ricky',1);
-INSERT INTO users (username,userpass,role) VALUES ('aparakh','aditya',1);
-INSERT INTO users (username,userpass,role) VALUES ('pgarcia','pepe',2);
-INSERT INTO users (username,userpass,role) VALUES ('oaldawud','omar',2);
-INSERT INTO users (username,userpass,role) VALUES ('xyi','xue',2);
-INSERT INTO users (username,userpass,role) VALUES ('kvladilkov','kristoff',2);
-INSERT INTO users (username,userpass,role) VALUES ('mmichelson','mike',3);
-INSERT INTO users (username,userpass,role) VALUES ('sstevenson','steve',3);
-INSERT INTO users (username,userpass,role) VALUES ('ppeterson','peter',3);
-INSERT INTO users (username,userpass,role) VALUES ('ssue','suzanne',3);
-INSERT INTO users (username,userpass,role) VALUES ('jcorrales','jarvin',3);
-INSERT INTO users (username,userpass,role) VALUES ('apatel','ashkosh',3);
+INSERT INTO user  (username,userpass,role) VALUES ('jsorribes','javier',1);
+INSERT INTO user  (username,userpass,role) VALUES ('enakagawa','eldon',1);
+INSERT INTO user  (username,userpass,role) VALUES ('rnguyen','ricky',1);
+INSERT INTO user  (username,userpass,role) VALUES ('aparakh','aditya',1);
+INSERT INTO user  (username,userpass,role) VALUES ('pgarcia','pepe',2);
+INSERT INTO user  (username,userpass,role) VALUES ('oaldawud','omar',2);
+INSERT INTO user  (username,userpass,role) VALUES ('xyi','xue',2);
+INSERT INTO user  (username,userpass,role) VALUES ('kvladilkov','kristoff',2);
+INSERT INTO user  (username,userpass,role) VALUES ('mmichelson','mike',3);
+INSERT INTO user  (username,userpass,role) VALUES ('sstevenson','steve',3);
+INSERT INTO user  (username,userpass,role) VALUES ('ppeterson','peter',3);
+INSERT INTO user  (username,userpass,role) VALUES ('ssue','suzanne',3);
+INSERT INTO user  (username,userpass,role) VALUES ('jcorrales','jarvin',3);
+INSERT INTO user  (username,userpass,role) VALUES ('apatel','ashkosh',3);
 
 
 INSERT INTO admin (username,firstname,lastname) VALUES ('jsorribes','Javier','Sorribes');

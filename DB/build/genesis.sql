@@ -11,8 +11,8 @@ CREATE TABLE user
   username VARCHAR(20) NOT NULL,
   userpass VARCHAR(20) NOT NULL,
   role INT NOT NULL,
-  --foreignid INT NOT NULL, --> wouldn't be able to make it a foreign key
-    --otherwise, shouldn't need ids in other tables
+  /*foreignid INT NOT NULL, --> wouldn't be able to make it a foreign key
+    otherwise, shouldn't need ids in other tables*/
   PRIMARY KEY (username)
 );
 

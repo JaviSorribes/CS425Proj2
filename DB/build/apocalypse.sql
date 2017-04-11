@@ -3,13 +3,14 @@
 	BE CAREFUL!!!
 */
 USE library;
-DROP TABLE controls;
-DROP TABLE takes;
-DROP TABLE has;
-DROP TABLE book;
-DROP TABLE course;
-DROP TABLE parent_contact;
-DROP TABLE parent;
-DROP TABLE student;
-DROP TABLE teacher;
-DROP TABLE admin;
+DROP TABLE IF EXISTS  controls;
+DROP TABLE IF EXISTS  takes;
+DROP TABLE IF EXISTS  has;
+DROP TABLE IF EXISTS  book;
+DROP TABLE IF EXISTS  course;
+DROP TABLE IF EXISTS  parent_contact;
+DROP TABLE IF EXISTS  parent;
+DROP TABLE IF EXISTS  student;
+DROP TABLE IF EXISTS  teacher;
+DROP TABLE IF EXISTS  admin;
+DROP DATABASE library;

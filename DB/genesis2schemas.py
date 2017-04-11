@@ -10,7 +10,7 @@ with open('build/genesis.sql','r') as f:
                 if inline.strip()[0:2] == '/*': #get rid of block comments
                     while inline.strip()[-2:] != '*/':
                         inline = f.readline()
-                elif inline.strip()[0] not in '(-' and all(d not in inline for d in ['PRIMARY','FOREIGN']):
+                elif inline.strip()[0] != '(' and all(d not in inline for d in ['PRIMARY','FOREIGN']):
                     newschema.append(inline.split()[0])
                 inline = f.readline()
             schemas.append((tablename,newschema))
