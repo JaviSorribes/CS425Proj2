@@ -6,11 +6,13 @@
 CREATE DATABASE IF NOT EXISTS library;
 USE library;
 
-CREATE TABLE users
+CREATE TABLE user
 (
   username VARCHAR(20) NOT NULL,
   userpass VARCHAR(20) NOT NULL,
   role INT NOT NULL,
+  --foreignid INT NOT NULL, --> wouldn't be able to make it a foreign key
+    --otherwise, shouldn't need ids in other tables
   PRIMARY KEY (username)
 );
 
@@ -21,7 +23,7 @@ CREATE TABLE admin
   lastname VARCHAR(20) NOT NULL, -- Added name for Admin and Teacher
   firstname VARCHAR(20) NOT NULL,
   PRIMARY KEY (adminid),
-  FOREIGN KEY (username) REFERENCES users(username)
+  FOREIGN KEY (username) REFERENCES user(username)
 );
 
 CREATE TABLE teacher
@@ -31,7 +33,7 @@ CREATE TABLE teacher
   lastname VARCHAR(20) NOT NULL,
   firstname VARCHAR(20) NOT NULL,
   PRIMARY KEY (teacherid),
-  FOREIGN KEY (username) REFERENCES users(username)
+  FOREIGN KEY (username) REFERENCES user(username)
 );
 
 CREATE TABLE student
@@ -44,7 +46,7 @@ CREATE TABLE student
   advisorid INT NOT NULL,
   PRIMARY KEY (studentid),
   FOREIGN KEY (advisorid) REFERENCES teacher(teacherid),
-  FOREIGN KEY (username) REFERENCES users(username)
+  FOREIGN KEY (username) REFERENCES user(username)
 );
 
 CREATE TABLE parent
