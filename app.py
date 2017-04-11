@@ -23,6 +23,20 @@ schemas = { 'user': ['username', 'userpass', 'role'],
 	'takes': ['studentid', 'name', 'year', 'semester'],
 	'controls': ['adminid', 'bookid'] }
 
+### SQL COMMANDS to be called dynamically from the templates: ###
+@app.context_processor
+def sqlcommands():
+    #define as many commands as needed here, and add them to the dict returned
+    def allstudents(): #an example
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        query = "SELECT * FROM student"
+        cursor.execute(query)
+        student_schema = schemas['student']
+        return [{student_schema[i]:tup[i] for i in range(len(student_schema))} for tup in cursor.fetchall()]
+    return dict(allstudents=allstudents)
+
+### PAGES (ROUTES): ###
 #schema user: (username, password, access, fk_id). PK: (username,password)
 @app.route("/login")
 def login():
