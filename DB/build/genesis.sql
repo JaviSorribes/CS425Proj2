@@ -11,42 +11,35 @@ CREATE TABLE user
   username VARCHAR(20) NOT NULL,
   userpass VARCHAR(20) NOT NULL,
   role INT NOT NULL,
-  /*foreignid INT NOT NULL, --> wouldn't be able to make it a foreign key
-    otherwise, shouldn't need ids in other tables*/
+  id INT NOT NULL,
   PRIMARY KEY (username)
 );
 
 CREATE TABLE admin
 (
-  username VARCHAR(20) NOT NULL,
   adminid INT NOT NULL AUTO_INCREMENT,
   lastname VARCHAR(20) NOT NULL, -- Added name for Admin and Teacher
   firstname VARCHAR(20) NOT NULL,
-  PRIMARY KEY (adminid),
-  FOREIGN KEY (username) REFERENCES user(username)
+  PRIMARY KEY (adminid)
 );
 
 CREATE TABLE teacher
 (
-  username VARCHAR(20) NOT NULL,
   teacherid INT NOT NULL AUTO_INCREMENT,
   lastname VARCHAR(20) NOT NULL,
   firstname VARCHAR(20) NOT NULL,
-  PRIMARY KEY (teacherid),
-  FOREIGN KEY (username) REFERENCES user(username)
+  PRIMARY KEY (teacherid)
 );
 
 CREATE TABLE student
 (
-  username VARCHAR(20) NOT NULL,
   studentid INT NOT NULL AUTO_INCREMENT,
   firstname VARCHAR(20) NOT NULL,
   lastname VARCHAR(20) NOT NULL,
   amountdue NUMERIC,
   advisorid INT NOT NULL,
   PRIMARY KEY (studentid),
-  FOREIGN KEY (advisorid) REFERENCES teacher(teacherid),
-  FOREIGN KEY (username) REFERENCES user(username)
+  FOREIGN KEY (advisorid) REFERENCES teacher(teacherid)
 );
 
 CREATE TABLE parent
