@@ -84,7 +84,10 @@ def books():
     cursor.execute(query)
     books = [tup2dict(tup,'book') for tup in cursor.fetchall()]
     print(books)
-    return render_template('admin-book.html',books=books, user=user)
+    if books:
+        return render_template('admin-book.html',books=books, user=user)
+    else:
+        return render_template('admin-bookerror.html',user=user)
 
 @app.route("/") #asking the user for dates
 def index():
