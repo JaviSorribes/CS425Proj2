@@ -10,7 +10,7 @@ app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.config['MYSQL_DATABASE_PORT'] = 3306
 mysql.init_app(app)
 
-#our database's schemas
+# Our database's schemas
 schemas = { 'user': ['username', 'userpass', 'role', 'id'],
 	'admin': ['adminid', 'lastname', 'firstname'],
 	'teacher': ['teacherid', 'lastname', 'firstname'],
@@ -23,6 +23,11 @@ schemas = { 'user': ['username', 'userpass', 'role', 'id'],
 	'takes': ['studentid', 'name', 'year', 'semester'],
 	'controls': ['adminid', 'bookid'] }
 
+# Take tuple, create dictionary:
+def tup2dict(tup,schema_name): #assumes right arguments
+    schema = schemas[schema_name]
+    return {schema[i]:tup[i] for i in range(len(schema))}
+
 ### SQL COMMANDS to be called dynamically from the templates: ###
 @app.context_processor
 def sqlcommands():
@@ -32,12 +37,10 @@ def sqlcommands():
         cursor = conn.cursor()
         query = "SELECT * FROM student"
         cursor.execute(query)
-        student_schema = schemas['student']
-        return [{student_schema[i]:tup[i] for i in range(len(student_schema))} for tup in cursor.fetchall()]
+        return [tup2dict(tup,'student') for tup in cursor.fetchall()]
     return dict(allstudents=allstudents)
 
 ### PAGES (ROUTES): ###
-#schema user: (username, password, access, fk_id). PK: (username,password)
 @app.route("/home", methods=['POST'])
 def login():
     username = request.form['username']
@@ -46,21 +49,23 @@ def login():
     cursor =conn.cursor()
     query = "SELECT * FROM user WHERE username = \"{}\" AND userpass = \"{}\"".format(username,password)
     cursor.execute(query)
-    data = cursor.fetchone()
+    data = tup2dict(cursor.fetchone(),'user')
     if data:
-        print(data[2])
-        if data[2] == 1:
-            query = "SELECT * FROM admin WHERE adminid = {}".format(data[3])
+        if data['role'] == 1:
+            query = "SELECT * FROM admin WHERE adminid = {}".format(data['id'])
             cursor.execute(query)
-            return render_template('admin.html', user=cursor.fetchone())
-        elif data[2] == 2:
-            query = "SELECT * FROM teacher WHERE teacherid = {}".format(data[3])
+            user = tup2dict(cursor.fetchone(),'admin')
+            return render_template('admin.html', user=user)
+        elif data['role'] == 2:
+            query = "SELECT * FROM teacher WHERE teacherid = {}".format(data['id'])
             cursor.execute(query)
-            return render_template('teacher.html', user=cursor.fetchone())
+            user = tup2dict(cursor.fetchone(),'teacher')
+            return render_template('teacher.html', user=user)
         else: #==3
-            query = "SELECT * FROM student WHERE studentid = {}".format(data[3])
+            query = "SELECT * FROM student WHERE studentid = {}".format(data['id'])
             cursor.execute(query)
-            return render_template('student.html', user=cursor.fetchone())
+            user = tup2dict(cursor.fetchone(),'student')
+            return render_template('student.html', user=user)
 
     #USER DOESN'T EXIST SO JUST DISPLAY SAME PAGE AGAIN
     return render_template('error.html')
