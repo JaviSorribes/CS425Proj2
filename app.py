@@ -32,13 +32,20 @@ def tup2dict(tup,schema_name): #assumes right arguments
 @app.context_processor
 def sqlcommands():
     #define as many commands as needed here, and add them to the dict returned
+    def allbooks():
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        query = "SELECT * FROM book"
+        cursor.execute(query)
+        book_schema = schemas['book']
+        return [tup2dict(tup,'book') for tup in cursor.fetchall()]
     def allstudents(): #an example
         conn = mysql.connect()
         cursor = conn.cursor()
         query = "SELECT * FROM student"
         cursor.execute(query)
         return [tup2dict(tup,'student') for tup in cursor.fetchall()]
-    return dict(allstudents=allstudents)
+    return dict(allstudents=allstudents, allbooks=allbooks)
 
 
 ### PAGES (ROUTES): ###
