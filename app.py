@@ -80,10 +80,11 @@ def login():
 
 @app.route("/books")
 def books():
-    query = "SELECT * FROM book WHERE title = {}".format(request.args['bookname'])
+    query = "SELECT * FROM book WHERE title = \"{}\"".format(request.args['bookname'])
     cursor.execute(query)
-    books = [tup2dict(tup,'book') for tup in cursor.fetchone()]
-    return render_template('admin-book.html',books=books)
+    books = [tup2dict(tup,'book') for tup in cursor.fetchall()]
+    print(books)
+    return render_template('admin-book.html',books=books, user=user)
 
 @app.route("/") #asking the user for dates
 def index():
