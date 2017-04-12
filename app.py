@@ -38,7 +38,7 @@ def sqlcommands():
 
 ### PAGES (ROUTES): ###
 #schema user: (username, password, access, fk_id). PK: (username,password)
-@app.route("/login", methods=['POST'])
+@app.route("/home", methods=['POST'])
 def login():
     username = request.form['username']
     password = request.form['password']
