@@ -11,10 +11,10 @@ app.config['MYSQL_DATABASE_PORT'] = 3306
 mysql.init_app(app)
 
 #our database's schemas
-schemas = { 'user': ['username', 'userpass', 'role'],
-	'admin': ['username', 'adminid', 'lastname', 'firstname'],
-	'teacher': ['username', 'teacherid', 'lastname', 'firstname'],
-	'student': ['username', 'studentid', 'firstname', 'lastname', 'amountdue', 'advisorid'],
+schemas = { 'user': ['username', 'userpass', 'role', 'id'],
+	'admin': ['adminid', 'lastname', 'firstname'],
+	'teacher': ['teacherid', 'lastname', 'firstname'],
+	'student': ['studentid', 'firstname', 'lastname', 'amountdue', 'advisorid'],
 	'parent': ['lastname', 'firstname'],
 	'parent_contact': ['contact', 'lastname', 'firstname'],
 	'course': ['name', 'year', 'semester', 'teacherid'],
