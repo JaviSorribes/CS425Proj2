@@ -40,6 +40,7 @@ def sqlcommands():
         return [tup2dict(tup,'student') for tup in cursor.fetchall()]
     return dict(allstudents=allstudents)
 
+
 ### PAGES (ROUTES): ###
 @app.route("/home", methods=['POST'])
 def login():
@@ -69,6 +70,7 @@ def login():
 
     #USER DOESN'T EXIST SO JUST DISPLAY SAME PAGE AGAIN
     return render_template('error.html')
+
 
 @app.route("/") #asking the user for dates
 def index():
