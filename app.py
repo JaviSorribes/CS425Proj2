@@ -13,7 +13,7 @@ conn = mysql.connect()
 cursor =conn.cursor()
 
 # Global user once logged-in
-user = {}
+user = None
 
 # Our database's schemas
 schemas = { 'user': ['username', 'userpass', 'role', 'id'],
@@ -31,6 +31,8 @@ schemas = { 'user': ['username', 'userpass', 'role', 'id'],
 # Take tuple, create dictionary:
 def tup2dict(tup,schema_name): #assumes right arguments
     schema = schemas[schema_name]
+    if not tup or len(tup) != len(schema): #no tuple, or mismatch with schema
+        return None
     return {schema[i]:tup[i] for i in range(len(schema))}
 
 ### SQL COMMANDS to be called dynamically from the templates: ###
@@ -86,7 +88,7 @@ def books():
 @app.route("/") #asking the user for dates
 def index():
     global user
-    user = {} # reset it when going to login
+    user = None # reset it when going to login
     return render_template('login.html')
 
 if __name__ == '__main__':
