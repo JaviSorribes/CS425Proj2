@@ -38,10 +38,10 @@ def sqlcommands():
 
 ### PAGES (ROUTES): ###
 #schema user: (username, password, access, fk_id). PK: (username,password)
-@app.route("/login")
+@app.route("/login", methods=['POST'])
 def login():
-    username = request.args['username']
-    password = request.args['password']
+    username = request.form['username']
+    password = request.form['password']
     conn = mysql.connect()
     cursor =conn.cursor()
     query = "SELECT * FROM user WHERE username = \"{}\" AND userpass = \"{}\"".format(username,password)
