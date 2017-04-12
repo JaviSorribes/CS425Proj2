@@ -49,12 +49,18 @@ def login():
     data = cursor.fetchone()
     if data:
         print(data[2])
-        if data[2] == 3:
-            return render_template('student.html')
+        if data[2] == 1:
+            query = "SELECT * FROM admin WHERE adminid = {}".format(data[3])
+            cursor.execute(query)
+            return render_template('admin.html', user=cursor.fetchone())
         elif data[2] == 2:
-            return render_template('teacher.html')
-        else: #==1
-            return render_template('admin.html')
+            query = "SELECT * FROM teacher WHERE teacherid = {}".format(data[3])
+            cursor.execute(query)
+            return render_template('teacher.html', user=cursor.fetchone())
+        else: #==3
+            query = "SELECT * FROM student WHERE studentid = {}".format(data[3])
+            cursor.execute(query)
+            return render_template('student.html', user=cursor.fetchone())
 
     #USER DOESN'T EXIST SO JUST DISPLAY SAME PAGE AGAIN
     return render_template('error.html')
