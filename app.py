@@ -9,6 +9,8 @@ app.config['MYSQL_DATABASE_DB'] = 'library'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.config['MYSQL_DATABASE_PORT'] = 3306
 mysql.init_app(app)
+conn = mysql.connect()
+cursor =conn.cursor()
 
 # Global user once logged-in
 user = {}
@@ -36,27 +38,21 @@ def tup2dict(tup,schema_name): #assumes right arguments
 def sqlcommands():
     #define as many commands as needed here, and add them to the dict returned
     def allbooks():
-        conn = mysql.connect()
-        cursor = conn.cursor()
         query = "SELECT * FROM book"
         cursor.execute(query)
         book_schema = schemas['book']
         return [tup2dict(tup,'book') for tup in cursor.fetchall()]
     def allstudents(): #an example
-        conn = mysql.connect()
-        cursor = conn.cursor()
         query = "SELECT * FROM student"
         cursor.execute(query)
         return [tup2dict(tup,'student') for tup in cursor.fetchall()]
-    return dict(allstudents=allstudents, allbooks=allbooks)
+    return dict(allbooks=allbooks, allstudents=allstudents)
 
 ### PAGES (ROUTES): ###
 @app.route("/home", methods=['POST'])
 def login():
     username = request.form['username']
     password = request.form['password']
-    conn = mysql.connect()
-    cursor =conn.cursor()
     query = "SELECT * FROM user WHERE username = \"{}\" AND userpass = \"{}\"".format(username,password)
     cursor.execute(query)
     data = tup2dict(cursor.fetchone(),'user')
@@ -82,8 +78,6 @@ def login():
 
 @app.route("/books")
 def books():
-    conn = mysql.connect()
-    cursor =conn.cursor()
     query = "SELECT * FROM book WHERE title = {}".format(request.args['bookname'])
     cursor.execute(query)
     books = [tup2dict(tup,'book') for tup in cursor.fetchone()]
