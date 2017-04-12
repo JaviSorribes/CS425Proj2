@@ -97,8 +97,10 @@
 <!--THE OVERVIEW FOR THE USER IS SHOWN HERE-->    
     <div id="overview" class="tab-pane fade in active">
       <h3>Overview</h3>
-        <p>A brief summary of your account
+      {% block user %}
+        <p>A brief summary of your account, {{ user[2] }}
         </p>
+      {% endblock %}
     </div>
 
 <!--THE USERS BOOKS ARE HANDLED HERE-->
