@@ -9,6 +9,11 @@ app.config['MYSQL_DATABASE_DB'] = 'library'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.config['MYSQL_DATABASE_PORT'] = 3306
 mysql.init_app(app)
+conn = mysql.connect()
+cursor =conn.cursor()
+
+# Global user once logged-in
+user = {}
 
 # Our database's schemas
 schemas = { 'user': ['username', 'userpass', 'role', 'id'],
@@ -33,19 +38,15 @@ def tup2dict(tup,schema_name): #assumes right arguments
 def sqlcommands():
     #define as many commands as needed here, and add them to the dict returned
     def allbooks():
-        conn = mysql.connect()
-        cursor = conn.cursor()
         query = "SELECT * FROM book"
         cursor.execute(query)
         book_schema = schemas['book']
         return [tup2dict(tup,'book') for tup in cursor.fetchall()]
     def allstudents(): #an example
-        conn = mysql.connect()
-        cursor = conn.cursor()
         query = "SELECT * FROM student"
         cursor.execute(query)
         return [tup2dict(tup,'student') for tup in cursor.fetchall()]
-    return dict(allstudents=allstudents, allbooks=allbooks)
+    return dict(allbooks=allbooks, allstudents=allstudents)
 
 
 ### PAGES (ROUTES): ###
@@ -53,12 +54,11 @@ def sqlcommands():
 def login():
     username = request.form['username']
     password = request.form['password']
-    conn = mysql.connect()
-    cursor =conn.cursor()
     query = "SELECT * FROM user WHERE username = \"{}\" AND userpass = \"{}\"".format(username,password)
     cursor.execute(query)
     data = tup2dict(cursor.fetchone(),'user')
     if data:
+        global user #to reference the global user guy
         if data['role'] == 1:
             query = "SELECT * FROM admin WHERE adminid = {}".format(data['id'])
             cursor.execute(query)
@@ -74,13 +74,20 @@ def login():
             cursor.execute(query)
             user = tup2dict(cursor.fetchone(),'student')
             return render_template('student.html', user=user)
-
     #USER DOESN'T EXIST SO JUST DISPLAY SAME PAGE AGAIN
     return render_template('error.html')
 
+@app.route("/books")
+def books():
+    query = "SELECT * FROM book WHERE title = {}".format(request.args['bookname'])
+    cursor.execute(query)
+    books = [tup2dict(tup,'book') for tup in cursor.fetchone()]
+    return render_template('admin-book.html',books=books)
 
 @app.route("/") #asking the user for dates
 def index():
+    global user
+    user = {} # reset it when going to login
     return render_template('login.html')
 
 if __name__ == '__main__':
