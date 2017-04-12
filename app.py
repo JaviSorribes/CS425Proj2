@@ -65,7 +65,6 @@ def login():
     #USER DOESN'T EXIST SO JUST DISPLAY SAME PAGE AGAIN
     return render_template('error.html')
 
-
 @app.route("/") #asking the user for dates
 def index():
     return render_template('login.html')
