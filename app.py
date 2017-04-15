@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template
 from flaskext.mysql import MySQL
+import methodcalls
 
 app = Flask(__name__)
 mysql = MySQL()
@@ -78,6 +79,7 @@ def login():
     #USER DOESN'T EXIST SO JUST DISPLAY SAME PAGE AGAIN
     return render_template('error.html')
 
+# NEED THE REMOVE THE FUNCTION. IT'S IMPORTANT!!!
 @app.route("/books")
 def books():
     query = "SELECT * FROM book WHERE title = \"{}\"".format(request.args['bookname'])
@@ -88,6 +90,14 @@ def books():
         return render_template('admin-book.html',books=books, user=user)
     else:
         return render_template('admin-bookerror.html',user=user)
+
+@app.route("/book_info/<isbn>")
+def book_info(isbn):
+    book_isbn = isbn
+    #methodcalls.book_summary("0439708184")
+    information = methodcalls.book_all(isbn)
+    print(information)
+    return render_template('admin-bookinfo.html', user=user, information=information)
 
 @app.route("/") #asking the user for dates
 def index():
