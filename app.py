@@ -25,7 +25,7 @@ schemas = { 'user': ['username', 'userpass', 'role', 'id'],
 	'parent_contact': ['contact', 'lastname', 'firstname'],
 	'course': ['name', 'year', 'semester', 'teacherid'],
 	'book': ['bookid', 'isbn', 'cost', 'duedate', 'datecheckedout', 'title', 'coursename', 'courseyear', 'coursesemester', 'studentid'],
-	'book_request': ['isbn', 'cost', 'title', 'coursename', 'courseyear', 'coursesemester', 'requestedby', 'quantity'],
+	'book_request': ['requestid', 'isbn', 'cost', 'title', 'coursename', 'courseyear', 'coursesemester', 'requestedby', 'quantity'],
 	'has': ['studentid', 'lastname', 'firstname'],
 	'takes': ['studentid', 'name', 'year', 'semester'],
 	'controls': ['adminid', 'bookid'] }

@@ -90,6 +90,7 @@ CREATE TABLE book
 
 CREATE TABLE book_request
 (
+  requestid INT NOT NULL AUTO_INCREMENT,
   isbn VARCHAR(10) NOT NULL,
   cost NUMERIC(6,2) NOT NULL,
   title VARCHAR(50) NOT NULL,
@@ -97,7 +98,8 @@ CREATE TABLE book_request
   courseyear INT(4) NOT NULL,
   coursesemester ENUM('fall','spring','summer') NOT NULL,
   requestedby ENUM('student','teacher') NOT NULL,
-  quantity INT(4) NOT NULL
+  quantity INT(4) NOT NULL,
+  PRIMARY KEY (requestid)
 );
 
 -- M:N relationships
