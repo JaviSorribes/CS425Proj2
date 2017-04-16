@@ -62,6 +62,10 @@ def sqlcommands():
         cursor.execute(query)
         book_schema = schemas['book']
         return [tup2dict(tup,'book') for tup in cursor.fetchall()]
+    def allrequests():
+        query = "SELECT * FROM book_request"
+        cursor.execute(query)
+        return [tup2dict(tup, 'book_request') for tup in cursor.fetchall()]
     def allstudents(): #an example
         query = "SELECT * FROM student"
         cursor.execute(query)
@@ -76,22 +80,14 @@ def sqlcommands():
         cursor.execute(query)
         book_Group = ['isbn', 'title', 'coursename', 'courseyear', 'coursesemester', 'quantity', 'cost']
         return [tup2dict(tup, book_Group) for tup in cursor.fetchall()]
-<<<<<<< HEAD
-    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allstudents=allstudents, groupBooks=groupBooks,
-                bookTitles=bookTitles)
-=======
     def parentcontacts(studentid):
         query = "SELECT parent_contact.contact, parent_contact.lastname, parent_contact.firstname FROM parent_contact LEFT JOIN has ON parent_contact.lastname=has.lastname AND parent_contact.firstname=has.firstname WHERE studentid={}".format(studentid)
         cursor.execute(query)
         parent_contact_schema = schemas['parent_contact']
         return [tup2dict(tup,'parent_contact') for tup in cursor.fetchall()]
-    def allrequests():
-        query = "SELECT * FROM book_request"
-        cursor.execute(query)
-        return [tup2dict(tup, 'book_request') for tup in cursor.fetchall()]
 
     return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, groupBooks=groupBooks, parentcontacts=parentcontacts, allrequests=allrequests)
->>>>>>> 71f794a79d803cd5e0280bc597c100f28768198f
+
 
 
 ### PAGES (ROUTES): ###
