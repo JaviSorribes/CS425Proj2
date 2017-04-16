@@ -83,6 +83,11 @@ def sqlcommands():
         course_schema = ['name']
         return [tup2dict(tup, course_schema) for tup in cursor.fetchall()]
 
+    def findadvisor(advisorid):
+        query = "SELECT * FROM teacher WHERE teacherid={}".format(advisorid)
+        cursor.execute(query)
+        return [tup2dict(tup,'teacher') for tup in cursor.fetchall()]
+
     def groupBooks():
         query = "SELECT isbn, title, coursename, courseyear, coursesemester, COUNT(*) as quantity, cost FROM book GROUP BY isbn, coursename, courseyear, coursesemester ORDER BY coursename, courseyear, coursesemester"
         cursor.execute(query)
@@ -106,7 +111,7 @@ def sqlcommands():
         cursor.execute(query)
         course_schema = ['year']
         return [tup2dict(tup, course_schema) for tup in cursor.fetchall()]
-    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, groupBooks=groupBooks, parentcontacts=parentcontacts, allrequests=allrequests, bookTitles = bookTitles, courses = courses, year=year, semester=semester)
+    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, findadvisor=findadvisor, groupBooks=groupBooks, parentcontacts=parentcontacts, allrequests=allrequests, bookTitles = bookTitles, courses = courses, year=year, semester=semester)
 
 
 ### PAGES (ROUTES): ###
