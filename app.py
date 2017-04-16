@@ -78,7 +78,11 @@ def sqlcommands():
         return [tup2dict(tup,'book') for tup in cursor.fetchall()]
 
     def courses():
-        query = "SELECT "
+        query = "SELECT DISTINCT(name) from COURSE"
+        cursor.execute(query)
+        course_schema = ['name']
+        return [tup2dict(tup, course_schema) for tup in cursor.fetchall()]
+
     def groupBooks():
         query = "SELECT isbn, title, coursename, courseyear, coursesemester, COUNT(*) as quantity, cost FROM book GROUP BY isbn, coursename, courseyear, coursesemester ORDER BY coursename, courseyear, coursesemester"
         cursor.execute(query)
@@ -91,7 +95,18 @@ def sqlcommands():
         parent_contact_schema = schemas['parent_contact']
         return [tup2dict(tup,'parent_contact') for tup in cursor.fetchall()]
 
-    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, groupBooks=groupBooks, parentcontacts=parentcontacts, allrequests=allrequests, bookTitles = bookTitles)
+    def semester():
+        query = "SELECT DISTINCT(semester) from COURSE"
+        cursor.execute(query)
+        course_schema = ['semester']
+        return [tup2dict(tup, course_schema) for tup in cursor.fetchall()]
+
+    def year():
+        query = "SELECT DISTINCT(year) from COURSE"
+        cursor.execute(query)
+        course_schema = ['year']
+        return [tup2dict(tup, course_schema) for tup in cursor.fetchall()]
+    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, groupBooks=groupBooks, parentcontacts=parentcontacts, allrequests=allrequests, bookTitles = bookTitles, courses = courses, year=year, semester=semester)
 
 
 ### PAGES (ROUTES): ###
