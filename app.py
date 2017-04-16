@@ -53,6 +53,7 @@ def sqlcommands():
         return [tup2dict(tup,'student') for tup in cursor.fetchall()]
     return dict(allbooks=allbooks, allstudents=allstudents)
 
+
 ### PAGES (ROUTES): ###
 @app.route("/home", methods=['POST'])
 def login():
@@ -84,6 +85,11 @@ def login():
 # NEED THE REMOVE THE FUNCTION. IT'S IMPORTANT!!!
 @app.route("/books")
 def books():
+    if request.args['bookname'].lower() == "all books":
+        query = "SELECT * FROM book"
+        cursor.execute(query)
+        books = [tup2dict(tup,'book') for tup in cursor.fetchall()]
+        return render_template('admin-book.html', books = books, user = user)
     query = "SELECT * FROM book WHERE title = \"{}\"".format(request.args['bookname'])
     cursor.execute(query)
     books = [tup2dict(tup,'book') for tup in cursor.fetchall()]
