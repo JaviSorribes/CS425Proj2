@@ -28,8 +28,7 @@ schemas = { 'user': ['username', 'userpass', 'role', 'id'],
 	'book_request': ['requestid', 'isbn', 'cost', 'title', 'coursename', 'courseyear', 'coursesemester', 'requestedby', 'quantity'],
 	'has': ['studentid', 'lastname', 'firstname'],
 	'takes': ['studentid', 'name', 'year', 'semester'],
-	'controls': ['adminid', 'bookid'],
-    'book_Group': ['isbn','title','coursename','courseyear','coursesemester','quantity','cost']}
+	'controls': ['adminid', 'bookid']}
 # Take tuple, create dictionary:
 def tup2dict(tup,schema): #assumes right arguments
     if isinstance(schema,str): #allows you to give the name of one of the default schemas
@@ -42,10 +41,6 @@ def tup2dict(tup,schema): #assumes right arguments
 @app.context_processor
 def sqlcommands():
     #define as many commands as needed here, and add them to the dict returned
-    def groupBooks():
-        query = "SELECT isbn, title, coursename, courseyear, coursesemester, COUNT(*) as quantity, cost FROM book GROUP BY isbn, coursename, courseyear, coursesemester ORDER BY coursename, courseyear, coursesemester"
-        cursor.execute(query)
-        return [tup2dict(tup,'book_Group') for tup in cursor.fetchall()]
     def allbooks():
         query = "SELECT * FROM book"
         cursor.execute(query)
@@ -66,11 +61,12 @@ def sqlcommands():
         query = "SELECT * FROM student"
         cursor.execute(query)
         return [tup2dict(tup,'student') for tup in cursor.fetchall()]
-<<<<<<< HEAD
-    return dict(allbooks=allbooks, allstudents=allstudents, groupBooks=groupBooks)
-=======
-    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allstudents=allstudents)
->>>>>>> c61b9bbdc9b411044c8ed43db8a727de80b023a8
+    def groupBooks():
+        query = "SELECT isbn, title, coursename, courseyear, coursesemester, COUNT(*) as quantity, cost FROM book GROUP BY isbn, coursename, courseyear, coursesemester ORDER BY coursename, courseyear, coursesemester"
+        cursor.execute(query)
+        book_Group = ['isbn', 'title', 'coursename', 'courseyear', 'coursesemester', 'quantity', 'cost']
+        return [tup2dict(tup, book_Group) for tup in cursor.fetchall()]
+    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allstudents=allstudents, groupBooks=groupBooks)
 
 
 ### PAGES (ROUTES): ###
