@@ -33,7 +33,7 @@ schemas = { 'user': ['username', 'userpass', 'role', 'id'],
 # Take tuple, create dictionary:
 def tup2dict(tup,schema): #assumes right arguments
     if isinstance(schema,str): #allows you to give the name of one of the default schemas
-        schema = schemas[schema]    #else, we will just use the dict schema that you give us!
+        schema = schemas[schema]    #else, we will just use the schema list that you give us!
     if not tup or len(tup) != len(schema): #no tuple, or mismatch with schema
         return None
     return {schema[i]:tup[i] for i in range(len(schema))}
