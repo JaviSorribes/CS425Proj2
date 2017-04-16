@@ -80,7 +80,8 @@ def sqlcommands():
         query = "SELECT * FROM book_request"
         cursor.execute(query)
         return [tup2dict(tup, 'book_request') for tup in cursor.fetchall()]
-    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, groupBooks=groupBooks, parentcontacts=parentcontacts, allrequests=allrequests())
+
+    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, groupBooks=groupBooks, parentcontacts=parentcontacts, allrequests=allrequests)
 
 
 ### PAGES (ROUTES): ###
@@ -163,11 +164,9 @@ def book_request_grant(requestid):
     answer = answer[0]
     # This stuff removes the book from request
     query = "DELETE FROM book_request WHERE requestid = {}".format(requestid)
-    #cursor.execute(query)
-    #conn.commit()
-
+    cursor.execute(query)
+    conn.commit()
     # First we have to insert the course into course.
-
     query = "INSERT INTO book (isbn,cost,title,coursename,courseyear,coursesemester) VALUES ({},{},\'{}\',\'{}\',{},\'{}\')".format(answer["isbn"],answer["cost"],answer["title"],answer["coursename"],answer["courseyear"],answer["coursesemester"])
     #print(query)
     cursor.execute(query)
