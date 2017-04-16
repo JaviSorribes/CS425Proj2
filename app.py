@@ -66,11 +66,20 @@ def sqlcommands():
         query = "SELECT * FROM student"
         cursor.execute(query)
         return [tup2dict(tup,'student') for tup in cursor.fetchall()]
+    def bookTitles():   #Returns the titles for the searching of the books
+        query = "SELECT * FROM book GROUP BY title"
+        cursor.execute(query)
+        #temp = [s for s in cursor.fetchall()]
+        return [tup2dict(tup,'book') for tup in cursor.fetchall()]
     def groupBooks():
         query = "SELECT isbn, title, coursename, courseyear, coursesemester, COUNT(*) as quantity, cost FROM book GROUP BY isbn, coursename, courseyear, coursesemester ORDER BY coursename, courseyear, coursesemester"
         cursor.execute(query)
         book_Group = ['isbn', 'title', 'coursename', 'courseyear', 'coursesemester', 'quantity', 'cost']
         return [tup2dict(tup, book_Group) for tup in cursor.fetchall()]
+<<<<<<< HEAD
+    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allstudents=allstudents, groupBooks=groupBooks,
+                bookTitles=bookTitles)
+=======
     def parentcontacts(studentid):
         query = "SELECT parent_contact.contact, parent_contact.lastname, parent_contact.firstname FROM parent_contact LEFT JOIN has ON parent_contact.lastname=has.lastname AND parent_contact.firstname=has.firstname WHERE studentid={}".format(studentid)
         cursor.execute(query)
@@ -82,6 +91,7 @@ def sqlcommands():
         return [tup2dict(tup, 'book_request') for tup in cursor.fetchall()]
 
     return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, groupBooks=groupBooks, parentcontacts=parentcontacts, allrequests=allrequests)
+>>>>>>> 71f794a79d803cd5e0280bc597c100f28768198f
 
 
 ### PAGES (ROUTES): ###

@@ -108,14 +108,25 @@
       <h3>Book Database</h3>
       <form action="/books" class="form-inline">
           <div class="form-group">
-            <input type="text" name="bookname" class="form-control" placeholder="Book Name">
+            <input list="book_list" type="text" name="bookname" class="form-control" placeholder="Book Name">
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
+          <div class="form-group">
+            <input type="hidden" name="bookname" class="form-control" placeholder="Book Name" value="all books">
+          </div>
+          <button type="submit" value = "all books" class="btn btn-default"><a href="#" onclick="history.go(-1)">Go Back</a></button>
+
         </form>
+        <datalist id = "book_list">
+            <option value="all books">
+            {%  for data in bookTitles() %}
+                <option value="{{ data['title'] }}">
+            {% endfor %}
+        </datalist>
         <table class="table table-bordered table-hover">
           
           <tbody>
-          <h1> NO BOOK FOUND </h1>
+          <h4><em>NO BOOK FOUND, SUBMIT A NEW BOOK REQUEST OR PRESS RETURN TO GO BACK</em></h4>
           </tbody>
         </table>
     </div>

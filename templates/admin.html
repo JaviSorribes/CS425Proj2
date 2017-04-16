@@ -51,7 +51,7 @@
   
 </nav>
 <div class="container bg-muted" style="padding:0px; background-color:white">
-    <div class="tab-content" style="margin-top:30px">
+    <div class="tab-content" style="    margin-top:30px">
     
 <!--THE OVERVIEW FOR THE USER IS SHOWN HERE-->    
     <div id="overview" class="tab-pane fade in active">
@@ -92,10 +92,16 @@
       <h3>Book Database</h3>
       <form action="/books" class="form-inline">
           <div class="form-group">
-            <input type="text" name="bookname" class="form-control" placeholder="Book Name">
+            <input list = "book_list" type="text" name="bookname" class="form-control" placeholder="Book Name">
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
+        <datalist id = "book_list">
+            <option value="all books">
+            {%  for data in bookTitles() %}
+                <option value="{{ data['title'] }}">
+            {% endfor %}
+        </datalist>
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
