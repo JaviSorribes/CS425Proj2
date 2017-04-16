@@ -36,7 +36,7 @@ CREATE TABLE student
   studentid INT NOT NULL AUTO_INCREMENT,
   firstname VARCHAR(20) NOT NULL,
   lastname VARCHAR(20) NOT NULL,
-  amountdue NUMERIC,
+  amountdue NUMERIC(5,2),
   advisorid INT NOT NULL,
   PRIMARY KEY (studentid),
   FOREIGN KEY (advisorid) REFERENCES teacher(teacherid)
@@ -44,21 +44,19 @@ CREATE TABLE student
 
 CREATE TABLE parent
 (
-  /*studentid INT NOT NULL,*/
+  parentid INT NOT NULL AUTO_INCREMENT,
   lastname VARCHAR(20) NOT NULL,
   firstname VARCHAR(20) NOT NULL,
-  PRIMARY KEY (lastname, firstname)
+  PRIMARY KEY (parentid)
   /*FOREIGN KEY (studentid) REFERENCES student(studentid)*/
 );
 
 CREATE TABLE parent_contact
 (
-  /*studentid INT NOT NULL,*/
+  parentid INT NOT NULL,
   contact VARCHAR(50) NOT NULL,
-  lastname VARCHAR(20) NOT NULL,
-  firstname VARCHAR(20) NOT NULL,
-  PRIMARY KEY (contact, lastname, firstname),
-  FOREIGN KEY (lastname, firstname) REFERENCES parent(lastname, firstname)
+  PRIMARY KEY (contact, parentid),
+  FOREIGN KEY (parentid) REFERENCES parent(parentid)
 );
 
 CREATE TABLE course
@@ -106,11 +104,10 @@ CREATE TABLE book_request
 CREATE TABLE has
 (
   studentid INT NOT NULL,
-  lastname VARCHAR(20) NOT NULL,
-  firstname VARCHAR(20) NOT NULL,
-  PRIMARY KEY (studentid, lastname, firstname),
+  parentid INT NOT NULL,
+  PRIMARY KEY (studentid, parentid),
   FOREIGN KEY (studentid) REFERENCES student(studentid),
-  FOREIGN KEY (lastname, firstname) REFERENCES parent(lastname, firstname)
+  FOREIGN KEY (parentid) REFERENCES parent(parentid)
 );
 
 CREATE TABLE takes
