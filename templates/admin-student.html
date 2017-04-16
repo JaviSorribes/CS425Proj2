@@ -1,10 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
+  <title>CS425 Project</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width-device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://adityaparakh.000webhostapp.com/bootstrap.min.css" >
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<style>
+.jumbotron{
+  background-color:#29AB8D;
+  color:white;
+}
+.jumbotron p{
+  color:black;
+  font-size: 40px;
+  text-align:left;
+  padding: 10px;
+}
+.tab-content{
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  padding: 10px;
+}
+.nav-tabs{
+  margin-bottom: 0;
+}
+.nav-tabs ul{
+  color:#0f0f0f;
+}
+</style>
 </head>
 <body>
-$END$
+
+<nav class="navbar navbar-fixed-top">
+  <div class="container bg-info">
+    <ul class="nav navbar-nav">
+      <p class="navbar-text">High School Library</p>
+      <li class="active"><a data-toggle="tab" href="#overview">Overview</a></li>
+      <li><a data-toggle="tab" href="#books">Books</a></li>
+      <li><a data-toggle="tab" href="#students">Manage Students</a></li>
+      <li><a data-toggle="tab" href="#courses">Manage Courses</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right" style="padding-right:10px">
+      <p class="navbar-text">Signed in as: Admin</p>
+      <li><button class="btn navbar-btn"><a href="/">Logout</a></button></li>
+    </ul>
+  </div>
+
+</nav>
+<div class="container bg-muted" style="padding:0px; background-color:white">
+    <div class="tab-content" style="    margin-top:30px">
+
+<!--THE OVERVIEW FOR THE USER IS SHOWN HERE-->
+    <div id="overview" class="tab-pane fade in active">
+      <h3>Overview</h3>
+      {% block user %}
+        <p>A brief summary of your account, {{ user["firstname"] }}
+        </p>
+      {% endblock %}
+        <h3>Books requested</h3>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>ISBN #</th>
+                    <th>Course</th>
+                    <th>Year </th>
+                    <th>Due Date</th>
+                    <th>Cost</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            {% for data in allrequests() %}
+            <tr>
+              <th>{{ data['title'] }}</th>
+              <th>{{ data['isbn'] }}</th>
+              <th>{{ data['coursename'] }}</th>
+              <th>{{ data['courseyear'] }}</th>
+              <th>{{ data['quantity'] }}</th>
+              <th>{{ data['cost'] }}</th>
+                <th><button><a href="/grant_request/{{data['requestid']}}">Grant</button></th>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+<!--THE USERS BOOKS ARE HANDLED HERE-->
+    <div id="books" class="tab-pane fade">
+      <h3>Book Database</h3>
+      <form action="/books" class="form-inline">
+          <div class="form-group">
+            <input list = "book_list" type="text" name="bookname" class="form-control" placeholder="Book Name">
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+        <datalist id = "book_list">
+            <option value="all books">
+            {%  for data in bookTitles() %}
+                <option value="{{ data['title'] }}">
+            {% endfor %}
+        </datalist>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>ISBN #</th>
+                    <th>Name</th>
+                    <th>Course</th>
+                    <th>Year</th>
+                    <th>Semester</th>
+                    <th>Cost</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in groupBooks() %}
+                <tr>
+                  <th>{{ data['isbn'] }}</th>
+                  <th>{{ data['title'] }}</th>
+                  <th>{{ data['coursename'] }}</th>
+                  <th>{{ data['courseyear'] }}</th>
+                  <th>{{ data['coursesemester'] }}</th>
+                  <th>{{ data['cost'] }}</th>
+                  <th>{{ data['quantity'] }}</th>
+                  <!--Student will be able to only borrow books that have been assigned-->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+<!--THE STUDENT FEES TAB IS HANDLED HERE-->
+    <div id="students" class="tab-pane fade">
+      <h3>Your Students</h3>
+        <p>Track your students and assign books.
+        </p>
+          <form class="form-inline">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Enter Student ID #">
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Amount Due</th>
+              <th>Amount Due</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>S0123456789</th>
+              <th>002-1156-2275</th>
+              <th>World History</th>
+              <th>May-22-2016</th>
+              <th>$89.99</th>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+
+<!--THE RELEVANT CONTACT INFORMATION IS HANDLED HERE-->
+    <div id="courses" class="tab-pane fade">
+      <!--<h3 style="text-align:center">Useful Contacts</h3>-->
+      <h3>Manage Courses</h3>
+        <form class="form-inline">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Enter Course">
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+
+
+      <table class="table table-hover table-bordered table-default">
+          <thead>
+            <tr>
+              <td>Course</td>
+              <td>Student ID</td>
+              <td>Book Name</td>
+              <td>Check-Out Date</td>
+              <td>Due Date</td>
+              <td>Overdue?</td>
+              <td>Email</td>
+            </tr>
+          </thead>
+          <tbody>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td><button type="email" class="btn btn-default">Contact</button></td>
+          </tbody>
+        </table>
+    </div>
+  </div>
+  </div>
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </body>
 </html>

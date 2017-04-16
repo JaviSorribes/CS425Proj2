@@ -70,7 +70,15 @@ def sqlcommands():
         query = "SELECT * FROM book_request"
         cursor.execute(query)
         return [tup2dict(tup, 'book_request') for tup in cursor.fetchall()]
-
+    def allusers():
+        query = "(SELECT studentid AS id,firstname,lastname,'student' AS access_level FROM student) UNION (SELECT teacherid AS id,firstname,lastname,'teacher' AS access_level FROM teacher) UNION (SELECT adminid AS id,firstname,lastname,'admin' AS access_level FROM admin);"
+        cursor.execute(query)
+        user_group = ['id','firstname','lastname','access_level']
+        return [tup2dict(tup,user_group) for tup in cursor.fetchall()]
+    def availableBooks():   #Returns data on the availability of all the books
+        query = "select COUNT(*) AS total_num_books, COUNT(datecheckedout) AS total_checked_out, COUNT(*)-COUNT(datecheckedout) AS available FROM book;"
+        cursor.execute(query)
+        return [tup for tup in cursor.fetchall()]
     def bookTitles():   #Returns the titles for the searching of the books
         query = "SELECT * FROM book GROUP BY title"
         cursor.execute(query)
@@ -91,7 +99,8 @@ def sqlcommands():
         parent_contact_schema = schemas['parent_contact']
         return [tup2dict(tup,'parent_contact') for tup in cursor.fetchall()]
 
-    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, groupBooks=groupBooks, parentcontacts=parentcontacts, allrequests=allrequests, bookTitles = bookTitles)
+    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, groupBooks=groupBooks, parentcontacts=parentcontacts, allrequests=allrequests, bookTitles = bookTitles,
+                allusers=allusers, availableBooks=availableBooks)
 
 
 ### PAGES (ROUTES): ###
@@ -138,6 +147,7 @@ def books():
         return render_template('admin-book.html',books=books, user=user)
     else:
         return render_template('admin-bookerror.html',user=user)
+
 
 @app.route("/request_book_teacher")
 def request_book_teacher():
