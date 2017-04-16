@@ -96,7 +96,7 @@
     <div class="tab-content" style="margin-top:30px">
     
 <!--THE OVERVIEW FOR THE USER IS SHOWN HERE-->    
-    <div role="tabpanel" id="overview" class="tab-pane fade in active">
+    <div id="overview" class="tab-pane fade in active">
       <h3>Overview</h3>
         <p>A brief summary of your account
         </p>
@@ -118,14 +118,16 @@
             </tr>
           </thead>
           <tbody>
+            {% for data in allbooksstudent(user['studentid']) %}
             <tr>
-              <th>Introduction to Algorithms</th>
-              <th>220-9579-1105</th>
-              <th>CS 430</th>
-              <th>Aug-13-2016</th>
-              <th>Dec-22-2016</th>
-              <th>$100.00<button type="submit" class="btn btn-default pull-right">Return</button></th>
+              <th>{{ data['title'] }}</th>
+              <th>{{ data['isbn'] }}</th>
+              <th>{{ data['coursename'] }}</th>
+              <th>{{ data['datecheckedout'] }}</th>
+              <th>{{ data['duedate'] }}</th>
+              <th>{{ data['cost'] }}<button type="submit" class="btn btn-default pull-right">Return</button></th>
             </tr>
+            {% endfor %}
           </tbody>
         </table>
         
@@ -151,14 +153,14 @@
             </tr>
           </thead>
           <tbody>
-            {% for data in allbooks() %}
+            {% for data in allbooksstudentavailable(user['studentid']) %}
             <tr>
               <th>{{ data['title'] }}</th>
               <th>{{ data['isbn'] }}</th>
               <th>{{ data['coursename'] }}</th>
-              <th>{{ data['datecheckedout'] }}</th>
-              <th>{{ data['duedate'] }}</th>
-              <th>{{ data['cost'] }}<button type="submit" class="btn btn-default pull-right">Borrow</button></th>
+              <th>Check Out Date</th>
+              <th>Due Date</th>
+              <th>Cost to Replace<button type="submit" class="btn btn-default pull-right">Borrow</button></th>
               <!--Student will be able to only borrow books that have been assigned-->
             </tr>
             {% endfor %}

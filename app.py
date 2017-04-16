@@ -31,8 +31,9 @@ schemas = { 'user': ['username', 'userpass', 'role', 'id'],
 	'controls': ['adminid', 'bookid'] }
 
 # Take tuple, create dictionary:
-def tup2dict(tup,schema_name): #assumes right arguments
-    schema = schemas[schema_name]
+def tup2dict(tup,schema): #assumes right arguments
+    if isinstance(schema,str): #allows you to give the name of one of the default schemas
+        schema = schemas[schema]    #else, we will just use the schema list that you give us!
     if not tup or len(tup) != len(schema): #no tuple, or mismatch with schema
         return None
     return {schema[i]:tup[i] for i in range(len(schema))}
@@ -46,11 +47,22 @@ def sqlcommands():
         cursor.execute(query)
         book_schema = schemas['book']
         return [tup2dict(tup,'book') for tup in cursor.fetchall()]
+    def allbooksstudent(studentid):
+        query = "SELECT * FROM book WHERE book.studentid={}".format(studentid)
+        cursor.execute(query)
+        book_schema = schemas['book']
+        return [tup2dict(tup,'book') for tup in cursor.fetchall()]
+    def allbooksstudentavailable(studentid):
+        query = "SELECT DISTINCT book.bookid, book.isbn, book.cost, book.duedate, book.datecheckedout, book.title, book.coursename, book.courseyear, book.coursesemester, book.studentid FROM (SELECT takes.name, takes.year, takes.semester FROM student RIGHT JOIN takes ON student.studentid=takes.studentid WHERE student.studentid={}) AS dtable RIGHT JOIN book ON book.coursename=dtable.name AND book.courseyear=dtable.year AND book.coursesemester=dtable.semester WHERE book.studentid is null AND dtable.name is not null".format(studentid)
+        #query = "SELECT * FROM book WHERE book.studentid is null"
+        cursor.execute(query)
+        book_schema = schemas['book']
+        return [tup2dict(tup,'book') for tup in cursor.fetchall()]
     def allstudents(): #an example
         query = "SELECT * FROM student"
         cursor.execute(query)
         return [tup2dict(tup,'student') for tup in cursor.fetchall()]
-    return dict(allbooks=allbooks, allstudents=allstudents)
+    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allstudents=allstudents)
 
 
 ### PAGES (ROUTES): ###
