@@ -185,18 +185,20 @@
             </tr>  
           </thead>
           <tbody>
+            {% for data in allbooksstudentfees(user['studentid']) %}
             <tr>
-              <th>World History: A global perspective</th>
-              <th>002-1156-2275</th>
-              <th>World History</th>
-              <th>May-22-2016</th>
-              <th>$89.99<button type="submit" class="btn btn-default pull-right">Return</button></th>
+              <th>{{ data['title'] }}</th>
+              <th>{{ data['isbn'] }}</th>
+              <th>{{ data['coursename'] }}</th>
+              <th>{{ data['duedate'] }}</th>
+              <th>{{ data['cost'] }}<button type="submit" class="btn btn-default pull-right">Return</button></th>
             </tr>
+            {% endfor %}
             <tr>
               <th></th>
               <th></th>
               <th></th>
-              <th>Total DUE:</th>
+              <th>Total DUE: {{ allbooksstudentfees(user['studentid'])|sum(attribute='cost')}}</th>
               <th></th>
             </tr>
           </tbody>
@@ -207,23 +209,11 @@
     <div id="contact" class="tab-pane fade">
       <!--<h3 style="text-align:center">Useful Contacts</h3>-->
       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-      <h4><u><br>CONTACT 1</u></h4>
+      <h4><u><br>CONTACT</u></h4>
         <p>
-          Contact for disputes regarding lost books<br>
-          Phone #:(PHONE 1) <br>
-          Email:(EMAIL 1)
-        </p>
-      <h4><u><br>CONTACT 2</u></h4>
-        <p>
-          Contact to report an issue to the school library.<br>
-          Phone #:(PHONE 2) <br>
-          Email:(EMAIL 2)
-        </p>
-      <h4><u><br>CONTACT 3</u></h4>
-        <p>
-          Contact for other questions.<br>
-          Phone #:(PHONE 3) <br>
-          Email:(EMAIL 3)
+          {% for data in parentcontacts(user['studentid']) %}
+          {{ data['contact'] }}<br>
+          {% endfor %}
         </p>
       </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding-top:50px">
