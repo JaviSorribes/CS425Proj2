@@ -156,6 +156,17 @@ def book_info(isbn):
     print(information)
     return render_template('admin-bookinfo.html', user=user, information=information)
 
+@app.route("/borrow_book/<studentid>/<bookid>")
+def borrow_book(studentid, bookid):
+    query = "SELECT * FROM book WHERE bookid={}".format(bookid)
+    cursor.execute(query)
+    answer = [tup2dict(tup, 'book') for tup in cursor.fetchall()]
+    answer = answer[0]
+    query="UPDATE book SET studentid={}, datecheckedout='{}', duedate=DATE_ADD(datecheckedout, INTERVAL 30 DAY) WHERE bookid={}".format(studentid, date.today().isoformat(), bookid)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('student.html', user=user)
+
 @app.route("/grant_request/<requestid>")
 def book_request_grant(requestid):
     query = "SELECT * FROM book_request WHERE requestid = {}".format(requestid)
@@ -172,6 +183,17 @@ def book_request_grant(requestid):
     cursor.execute(query)
     conn.commit()
     return render_template('admin.html', user=user)
+
+@app.route("/borrow_book/<bookid>")
+def return_book(bookid):
+    query = "SELECT * FROM book WHERE bookid={}".format(bookid)
+    cursor.execute(query)
+    answer = [tup2dict(tup, 'book') for tup in cursor.fetchall()]
+    answer = answer[0]
+    query="UPDATE book SET studentid=NULL, datecheckedout=NULL, duedate=NULL WHERE bookid={}".format(bookid)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('student.html', user=user)
 
 @app.route("/") #asking the user for dates
 def index():
