@@ -74,7 +74,7 @@ CREATE TABLE course
 CREATE TABLE book
 (
   bookid INT NOT NULL AUTO_INCREMENT,
-  isbn INT NOT NULL,
+  isbn VARCHAR(10) NOT NULL,
   cost NUMERIC(6,2) NOT NULL,
   duedate DATE,
   datecheckedout DATE,

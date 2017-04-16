@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template
 from flaskext.mysql import MySQL
+import methodcalls
 
 app = Flask(__name__)
 mysql = MySQL()
@@ -13,7 +14,7 @@ conn = mysql.connect()
 cursor =conn.cursor()
 
 # Global user once logged-in
-user = {}
+user = None
 
 # Our database's schemas
 schemas = { 'user': ['username', 'userpass', 'role', 'id'],
@@ -31,6 +32,8 @@ schemas = { 'user': ['username', 'userpass', 'role', 'id'],
 # Take tuple, create dictionary:
 def tup2dict(tup,schema_name): #assumes right arguments
     schema = schemas[schema_name]
+    if not tup or len(tup) != len(schema): #no tuple, or mismatch with schema
+        return None
     return {schema[i]:tup[i] for i in range(len(schema))}
 
 ### SQL COMMANDS to be called dynamically from the templates: ###
@@ -77,17 +80,30 @@ def login():
     #USER DOESN'T EXIST SO JUST DISPLAY SAME PAGE AGAIN
     return render_template('error.html')
 
+# NEED THE REMOVE THE FUNCTION. IT'S IMPORTANT!!!
 @app.route("/books")
 def books():
-    query = "SELECT * FROM book WHERE title = {}".format(request.args['bookname'])
+    query = "SELECT * FROM book WHERE title = \"{}\"".format(request.args['bookname'])
     cursor.execute(query)
-    books = [tup2dict(tup,'book') for tup in cursor.fetchone()]
-    return render_template('admin-book.html',books=books)
+    books = [tup2dict(tup,'book') for tup in cursor.fetchall()]
+    print(books)
+    if books:
+        return render_template('admin-book.html',books=books, user=user)
+    else:
+        return render_template('admin-bookerror.html',user=user)
+
+@app.route("/book_info/<isbn>")
+def book_info(isbn):
+    book_isbn = isbn
+    #methodcalls.book_summary("0439708184")
+    information = methodcalls.book_all(isbn)
+    print(information)
+    return render_template('admin-bookinfo.html', user=user, information=information)
 
 @app.route("/") #asking the user for dates
 def index():
     global user
-    user = {} # reset it when going to login
+    user = None # reset it when going to login
     return render_template('login.html')
 
 if __name__ == '__main__':
