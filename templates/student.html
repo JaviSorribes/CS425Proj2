@@ -209,11 +209,23 @@
     <div id="contact" class="tab-pane fade">
       <!--<h3 style="text-align:center">Useful Contacts</h3>-->
       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-      <h4><u><br>CONTACT</u></h4>
+      <h4><u><br>CONTACT 1</u></h4>
         <p>
-          {% for data in parentcontacts(user['studentid']) %}
-          {{ data['contact'] }}<br>
-          {% endfor %}
+          Contact for disputes regarding lost books<br>
+          Phone #:(PHONE 1) <br>
+          Email:(EMAIL 1)
+        </p>
+      <h4><u><br>CONTACT 2</u></h4>
+        <p>
+          Contact to report an issue to the school library.<br>
+          Phone #:(PHONE 2) <br>
+          Email:(EMAIL 2)
+        </p>
+      <h4><u><br>CONTACT 3</u></h4>
+        <p>
+          Contact for other questions.<br>
+          Phone #:(PHONE 3) <br>
+          Email:(EMAIL 3)
         </p>
       </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding-top:50px">
@@ -253,11 +265,12 @@
         </div>
     </div>
     
-<!--THE USER INFORMATION IS HANDLED HERE-->
+<!--THE 0 INFORMATION IS HANDLED HERE-->
     <div id="userInfo" class="tab-pane fade">
       <h3>Keep your contact information updated to avoid missing important dates!</h3>
-        <p>Mailing Address: St #<br>
-          City,State,ZIP<br>
+        <p>{% for data in parentcontacts(user['studentid']) %}
+          {{ data['contact'] }}<br>
+          {% endfor %}
         </p>
     </div>
   </div>
