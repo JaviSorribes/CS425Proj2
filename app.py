@@ -165,7 +165,7 @@ def borrow_book(studentid, bookid):
     query="UPDATE book SET studentid={}, datecheckedout='{}', duedate=DATE_ADD(datecheckedout, INTERVAL 30 DAY) WHERE bookid={}".format(studentid, date.today().isoformat(), bookid)
     cursor.execute(query)
     conn.commit()
-    return render_template('student.html', user=user)
+    return render_template('student.html', user=user, today=date.today())
 
 @app.route("/grant_request/<requestid>")
 def book_request_grant(requestid):
@@ -193,7 +193,7 @@ def return_book(bookid):
     query="UPDATE book SET studentid=NULL, datecheckedout=NULL, duedate=NULL WHERE bookid={}".format(bookid)
     cursor.execute(query)
     conn.commit()
-    return render_template('student.html', user=user)
+    return render_template('student.html', user=user, today=date.today())
 
 @app.route("/") #asking the user for dates
 def index():
