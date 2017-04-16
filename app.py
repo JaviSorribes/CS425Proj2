@@ -76,7 +76,12 @@ def sqlcommands():
         cursor.execute(query)
         parent_contact_schema = schemas['parent_contact']
         return [tup2dict(tup,'parent_contact') for tup in cursor.fetchall()]
-    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, groupBooks=groupBooks, parentcontacts=parentcontacts)
+    def allrequests():
+        query = "SELECT * FROM book_request"
+        cursor.execute(query)
+        return [tup2dict(tup, 'book_request') for tup in cursor.fetchall()]
+
+    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, groupBooks=groupBooks, parentcontacts=parentcontacts, allrequests=allrequests)
 
 
 ### PAGES (ROUTES): ###
@@ -150,6 +155,45 @@ def book_info(isbn):
     information = methodcalls.book_all(isbn)
     print(information)
     return render_template('admin-bookinfo.html', user=user, information=information)
+
+@app.route("/borrow_book/<studentid>/<bookid>")
+def borrow_book(studentid, bookid):
+    query = "SELECT * FROM book WHERE bookid={}".format(bookid)
+    cursor.execute(query)
+    answer = [tup2dict(tup, 'book') for tup in cursor.fetchall()]
+    answer = answer[0]
+    query="UPDATE book SET studentid={}, datecheckedout='{}', duedate=DATE_ADD(datecheckedout, INTERVAL 30 DAY) WHERE bookid={}".format(studentid, date.today().isoformat(), bookid)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('student.html', user=user)
+
+@app.route("/grant_request/<requestid>")
+def book_request_grant(requestid):
+    query = "SELECT * FROM book_request WHERE requestid = {}".format(requestid)
+    cursor.execute(query)
+    answer = [tup2dict(tup, 'book_request') for tup in cursor.fetchall()]
+    answer = answer[0]
+    # This stuff removes the book from request
+    query = "DELETE FROM book_request WHERE requestid = {}".format(requestid)
+    cursor.execute(query)
+    conn.commit()
+    # First we have to insert the course into course.
+    query = "INSERT INTO book (isbn,cost,title,coursename,courseyear,coursesemester) VALUES ({},{},\'{}\',\'{}\',{},\'{}\')".format(answer["isbn"],answer["cost"],answer["title"],answer["coursename"],answer["courseyear"],answer["coursesemester"])
+    #print(query)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('admin.html', user=user)
+
+@app.route("/borrow_book/<bookid>")
+def return_book(bookid):
+    query = "SELECT * FROM book WHERE bookid={}".format(bookid)
+    cursor.execute(query)
+    answer = [tup2dict(tup, 'book') for tup in cursor.fetchall()]
+    answer = answer[0]
+    query="UPDATE book SET studentid=NULL, datecheckedout=NULL, duedate=NULL WHERE bookid={}".format(bookid)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('student.html', user=user)
 
 @app.route("/") #asking the user for dates
 def index():

@@ -60,6 +60,30 @@
         <p>A brief summary of your account, {{ user["firstname"] }}
         </p>
       {% endblock %}
+        <h3>Books requested</h3>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>ISBN #</th>
+                    <th>Course</th>
+                    <th></th>
+                    <th>Due Date</th>
+                    <th>Cost</th>
+                </tr>
+            </thead>
+            {% for data in allrequests() %}
+            <tr>
+              <th>{{ data['title'] }}</th>
+              <th>{{ data['isbn'] }}</th>
+              <th>{{ data['coursename'] }}</th>
+              <th>{{ data['courseyear'] }}</th>
+              <th>{{ data['quantity'] }}</th>
+              <th>{{ data['cost'] }}</th>
+                <th><button><a href="/grant_request/{{data['requestid']}}">Grant</button></th>
+            </tr>
+            {% endfor %}
+        </table>
     </div>
 
 <!--THE USERS BOOKS ARE HANDLED HERE-->
