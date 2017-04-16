@@ -166,12 +166,28 @@ def request_book_teacher():
     if cost == "error":
         print("error")
     title = methodcalls.book_title(isbn)
+    courses_list = sqlcommands()["courses"]()
+    courses_list_new = set()
+    year_list = sqlcommands()["year"]()
+    year_list_new = set()
+    semester_list = sqlcommands()["semester"]()
+    semester_list_new = set()
+    for courses in courses_list:
+        courses_list_new.add(courses["name"])
+    for courses in year_list:
+        year_list_new.add(courses["year"])
+    for courses in semester_list:
+        semester_list_new.add(courses["semester"])
 
-    query = "INSERT INTO book_request (isbn,cost,title,coursename,courseyear,coursesemester,requestedby,quantity) " \
-    "VALUES ({},{},\"{}\",\"{}\",\"{}\",\"{}\",'teacher',{});".format(isbn,cost,title,course_name,course_year,course_sem,quantity)
-    cursor.execute(query)
-    conn.commit()
-    return render_template("teacher-requestdone.html")
+    if course_name not in courses_list_new or course_year not in year_list_new or course_sem not in semester_list_new:
+        return render_template("teacher-requesterror.html")
+    else:
+        query = "INSERT INTO book_request (isbn,cost,title,coursename,courseyear,coursesemester,requestedby,quantity) " \
+                "VALUES ({},{},\"{}\",\"{}\",\"{}\",\"{}\",'teacher',{});".format(isbn, cost, title, course_name,
+                                                                                  course_year, course_sem, quantity)
+        cursor.execute(query)
+        conn.commit()
+        return render_template("teacher-requestdone.html")
 
 @app.route("/book_info/<isbn>")
 def book_info(isbn):
