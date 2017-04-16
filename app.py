@@ -46,11 +46,17 @@ def sqlcommands():
         cursor.execute(query)
         book_schema = schemas['book']
         return [tup2dict(tup,'book') for tup in cursor.fetchall()]
+    def allbooksstudent(studentid):
+        query = "SELECT DISTINCT book.bookid, book.isbn, book.cost, book.duedate, book.datecheckedout, book.title, book.coursename, book.courseyear, book.coursesemester, book.studentid FROM (SELECT takes.name, takes.year, takes.semester FROM student RIGHT JOIN takes ON student.studentid=takes.studentid WHERE student.studentid={}) AS dtable RIGHT JOIN book ON book.coursename=dtable.name AND book.courseyear=dtable.year AND book.coursesemester=dtable.semester WHERE book.studentid is null AND dtable.name is not null".format(studentid)
+        #query = "SELECT * FROM book WHERE book.studentid is null"
+        cursor.execute(query)
+        book_schema = schemas['book']
+        return [tup2dict(tup,'book') for tup in cursor.fetchall()]
     def allstudents(): #an example
         query = "SELECT * FROM student"
         cursor.execute(query)
         return [tup2dict(tup,'student') for tup in cursor.fetchall()]
-    return dict(allbooks=allbooks, allstudents=allstudents)
+    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allstudents=allstudents)
 
 
 ### PAGES (ROUTES): ###
