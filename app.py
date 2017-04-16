@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template
 from flaskext.mysql import MySQL
+from datetime import date,timedelta
 import methodcalls
 
 app = Flask(__name__)
@@ -28,8 +29,7 @@ schemas = { 'user': ['username', 'userpass', 'role', 'id'],
 	'book_request': ['requestid', 'isbn', 'cost', 'title', 'coursename', 'courseyear', 'coursesemester', 'requestedby', 'quantity'],
 	'has': ['studentid', 'lastname', 'firstname'],
 	'takes': ['studentid', 'name', 'year', 'semester'],
-	'controls': ['adminid', 'bookid'] }
-
+	'controls': ['adminid', 'bookid']}
 # Take tuple, create dictionary:
 def tup2dict(tup,schema): #assumes right arguments
     if isinstance(schema,str): #allows you to give the name of one of the default schemas
@@ -54,7 +54,11 @@ def sqlcommands():
         return [tup2dict(tup,'book') for tup in cursor.fetchall()]
     def allbooksstudentavailable(studentid):
         query = "SELECT DISTINCT book.bookid, book.isbn, book.cost, book.duedate, book.datecheckedout, book.title, book.coursename, book.courseyear, book.coursesemester, book.studentid FROM (SELECT takes.name, takes.year, takes.semester FROM student RIGHT JOIN takes ON student.studentid=takes.studentid WHERE student.studentid={}) AS dtable RIGHT JOIN book ON book.coursename=dtable.name AND book.courseyear=dtable.year AND book.coursesemester=dtable.semester WHERE book.studentid is null AND dtable.name is not null".format(studentid)
-        #query = "SELECT * FROM book WHERE book.studentid is null"
+        cursor.execute(query)
+        book_schema = schemas['book']
+        return [tup2dict(tup,'book') for tup in cursor.fetchall()]
+    def allbooksstudentfees(studentid):
+        query = "SELECT * FROM book WHERE book.studentid={} AND book.duedate<'{}'".format(studentid,date.today().isoformat())
         cursor.execute(query)
         book_schema = schemas['book']
         return [tup2dict(tup,'book') for tup in cursor.fetchall()]
@@ -62,7 +66,12 @@ def sqlcommands():
         query = "SELECT * FROM student"
         cursor.execute(query)
         return [tup2dict(tup,'student') for tup in cursor.fetchall()]
-    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allstudents=allstudents)
+    def groupBooks():
+        query = "SELECT isbn, title, coursename, courseyear, coursesemester, COUNT(*) as quantity, cost FROM book GROUP BY isbn, coursename, courseyear, coursesemester ORDER BY coursename, courseyear, coursesemester"
+        cursor.execute(query)
+        book_Group = ['isbn', 'title', 'coursename', 'courseyear', 'coursesemester', 'quantity', 'cost']
+        return [tup2dict(tup, book_Group) for tup in cursor.fetchall()]
+    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, groupBooks=groupBooks)
 
 
 ### PAGES (ROUTES): ###
@@ -79,17 +88,17 @@ def login():
             query = "SELECT * FROM admin WHERE adminid = {}".format(data['id'])
             cursor.execute(query)
             user = tup2dict(cursor.fetchone(),'admin')
-            return render_template('admin.html', user=user)
+            return render_template('admin.html', user=user, today=date.today())
         elif data['role'] == 2:
             query = "SELECT * FROM teacher WHERE teacherid = {}".format(data['id'])
             cursor.execute(query)
             user = tup2dict(cursor.fetchone(),'teacher')
-            return render_template('teacher.html', user=user)
+            return render_template('teacher.html', user=user, today=date.today())
         else: #==3
             query = "SELECT * FROM student WHERE studentid = {}".format(data['id'])
             cursor.execute(query)
             user = tup2dict(cursor.fetchone(),'student')
-            return render_template('student.html', user=user)
+            return render_template('student.html', user=user, today=date.today())
     #USER DOESN'T EXIST SO JUST DISPLAY SAME PAGE AGAIN
     return render_template('error.html')
 
@@ -109,6 +118,25 @@ def books():
         return render_template('admin-book.html',books=books, user=user)
     else:
         return render_template('admin-bookerror.html',user=user)
+
+@app.route("/request_book_teacher")
+def request_book_teacher():
+    isbn = request.args["bookisbn"]
+    course_name = request.args["coursename"]
+    quantity = request.args["quantity"]
+    course_year = request.args["courseyear"]
+    course_sem = request.args["coursesem"]
+    methodcalls.book_all(isbn)
+    cost = methodcalls.book_price(isbn)
+    if cost == "error":
+        print("error")
+    title = methodcalls.book_title(isbn)
+
+    query = "INSERT INTO book_request (isbn,cost,title,coursename,courseyear,coursesemester,requestedby,quantity) " \
+    "VALUES ({},{},\"{}\",\"{}\",\"{}\",\"{}\",'teacher',{});".format(isbn,cost,title,course_name,course_year,course_sem,quantity)
+    cursor.execute(query)
+    conn.commit()
+    return render_template("teacher-requestdone.html")
 
 @app.route("/book_info/<isbn>")
 def book_info(isbn):
