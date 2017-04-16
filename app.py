@@ -61,12 +61,18 @@ def sqlcommands():
         query = "SELECT * FROM student"
         cursor.execute(query)
         return [tup2dict(tup,'student') for tup in cursor.fetchall()]
+    def bookTitles():   #Returns the titles for the searching of the books
+        query = "SELECT * FROM book GROUP BY title"
+        cursor.execute(query)
+        #temp = [s for s in cursor.fetchall()]
+        return [tup2dict(tup,'book') for tup in cursor.fetchall()]
     def groupBooks():
         query = "SELECT isbn, title, coursename, courseyear, coursesemester, COUNT(*) as quantity, cost FROM book GROUP BY isbn, coursename, courseyear, coursesemester ORDER BY coursename, courseyear, coursesemester"
         cursor.execute(query)
         book_Group = ['isbn', 'title', 'coursename', 'courseyear', 'coursesemester', 'quantity', 'cost']
         return [tup2dict(tup, book_Group) for tup in cursor.fetchall()]
-    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allstudents=allstudents, groupBooks=groupBooks)
+    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allstudents=allstudents, groupBooks=groupBooks,
+                bookTitles=bookTitles)
 
 
 ### PAGES (ROUTES): ###

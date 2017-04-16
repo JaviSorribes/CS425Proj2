@@ -69,10 +69,16 @@
       <h3>Book Database</h3>
       <form action="/books" class="form-inline">
           <div class="form-group">
-            <input type="text" name="bookname" class="form-control" placeholder="Book Name">
+            <input list="book_list" type="text" name="bookname" class="form-control" placeholder="Book Name">
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
+        <datalist id = "book_list">
+            <option value="all books">
+            {%  for data in bookTitles() %}
+                <option value="{{ data['title'] }}">
+            {% endfor %}
+        </datalist>
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
