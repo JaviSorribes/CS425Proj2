@@ -22,14 +22,14 @@ schemas = { 'user': ['username', 'userpass', 'role', 'id'],
 	'admin': ['adminid', 'lastname', 'firstname'],
 	'teacher': ['teacherid', 'lastname', 'firstname'],
 	'student': ['studentid', 'firstname', 'lastname', 'amountdue', 'advisorid'],
-	'parent': ['lastname', 'firstname'],
-	'parent_contact': ['contact', 'lastname', 'firstname'],
+	'parent': ['parentid', 'lastname', 'firstname'],
+	'parent_contact': ['parentid', 'contact'],
 	'course': ['name', 'year', 'semester', 'teacherid'],
 	'book': ['bookid', 'isbn', 'cost', 'duedate', 'datecheckedout', 'title', 'coursename', 'courseyear', 'coursesemester', 'studentid'],
 	'book_request': ['requestid', 'isbn', 'cost', 'title', 'coursename', 'courseyear', 'coursesemester', 'requestedby', 'quantity'],
-	'has': ['studentid', 'lastname', 'firstname'],
+	'has': ['studentid', 'parentid'],
 	'takes': ['studentid', 'name', 'year', 'semester'],
-	'controls': ['adminid', 'bookid']}
+	'controls': ['adminid', 'bookid'] }
 # Take tuple, create dictionary:
 def tup2dict(tup,schema): #assumes right arguments
     if isinstance(schema,str): #allows you to give the name of one of the default schemas
