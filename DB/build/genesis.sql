@@ -90,11 +90,14 @@ CREATE TABLE book
 
 CREATE TABLE book_request
 (
-  isbn VARCHAR(10),
+  isbn VARCHAR(10) NOT NULL,
+  cost NUMERIC(6,2) NOT NULL,
+  title VARCHAR(50) NOT NULL,
   coursename VARCHAR(20) NOT NULL,
   courseyear INT(4) NOT NULL,
   coursesemester ENUM('fall','spring','summer') NOT NULL,
-  requestedby ENUM('student','teacher') NOT NULL
+  requestedby ENUM('student','teacher') NOT NULL,
+  quantity INT(4) NOT NULL
 );
 
 -- M:N relationships
