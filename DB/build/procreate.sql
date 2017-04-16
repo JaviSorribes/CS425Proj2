@@ -113,6 +113,10 @@ INSERT INTO book (isbn,cost,title,coursename,courseyear,coursesemester,studentid
 INSERT INTO book (isbn,cost,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321210263',15.20,'Software Engineering for Engineers','CS487',2017,'spring',2);
 INSERT INTO book (isbn,cost,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321369572',36.50,'Database Systems','CS425',2017,'spring',NULL);
 
+INSERT INTO book_request (coursename,courseyear,coursesemester,requestedby) VALUES ('MATH333',2017,'spring','student');
+INSERT INTO book_request (isbn,coursename,courseyear,coursesemester,requestedby) VALUES ('0060935464','LIT202',2017,'spring','teacher');
+INSERT INTO book_request (isbn,coursename,courseyear,coursesemester,requestedby) VALUES ('0321210263','CS487',2017,'spring','teacher');
+
 INSERT INTO controls (adminid,bookid) VALUES (1,1);
 INSERT INTO controls (adminid,bookid) VALUES (1,2);
 INSERT INTO controls (adminid,bookid) VALUES (1,3);

@@ -78,7 +78,6 @@ CREATE TABLE book
   cost NUMERIC(6,2) NOT NULL,
   duedate DATE,
   datecheckedout DATE,
-  orderbytype VARCHAR(20),
   title VARCHAR(50) NOT NULL,
   coursename VARCHAR(20) NOT NULL,
   courseyear INT(4) NOT NULL,
@@ -87,6 +86,15 @@ CREATE TABLE book
   PRIMARY KEY (bookid),
   FOREIGN KEY (coursename, courseyear, coursesemester) REFERENCES course(name, year, semester),
   FOREIGN KEY (studentid) REFERENCES student(studentid)
+);
+
+CREATE TABLE book_request
+(
+  isbn VARCHAR(10),
+  coursename VARCHAR(20) NOT NULL,
+  courseyear INT(4) NOT NULL,
+  coursesemester ENUM('fall','spring','summer') NOT NULL,
+  requestedby ENUM('student','teacher') NOT NULL
 );
 
 -- M:N relationships
