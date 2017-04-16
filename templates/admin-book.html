@@ -84,9 +84,10 @@
             <tr>
               <th>Name</th>
               <th>ISBN #</th>
-              <th>Subject</th>
-              <th>Quantity Available</th>
+              <th>Course</th>
+              <th>Year</th>
               <th>Cost</th>
+              <th>Manage</th>
             </tr>
           </thead>
           <tbody>
@@ -95,8 +96,9 @@
               <th><a href="/book_info/{{book['isbn']}}">{{book["title"]}}</th>
               <th>{{book["isbn"]}}</th>
               <th>{{book["coursename"]}}</th>
-              <th>{{book["cost"]}}</th>
               <th>{{book["courseyear"]}}</th>
+              <th>{{book["cost"]}}</th>
+              <th></th>
             </tr>
           {% endfor %}
           </tbody>
