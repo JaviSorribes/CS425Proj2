@@ -104,6 +104,11 @@ def sqlcommands():
         book_Group = ['isbn', 'title', 'coursename', 'courseyear', 'coursesemester', 'quantity', 'cost']
         return [tup2dict(tup, book_Group) for tup in cursor.fetchall()]
 
+    def numbooksoverdue(studentid):
+        query = "SELECT COUNT(*) FROM book WHERE studentid={}".format(studentid)
+        cursor.execute(query)
+        return cursor.fetchone()[0]
+
     def parentcontacts(studentid):
         query = "SELECT parent.lastname, parent.firstname, parent_contact.contact FROM has LEFT JOIN parent ON has.parentid=parent.parentid LEFT JOIN parent_contact ON parent.parentid=parent_contact.parentid WHERE studentid={}".format(studentid)
         cursor.execute(query)
@@ -123,8 +128,8 @@ def sqlcommands():
 
     return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable,
                 allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, findadvisor=findadvisor, groupBooks=groupBooks,
-                parentcontacts=parentcontacts, allrequests=allrequests, bookTitles = bookTitles, courses = courses,
-                year=year, semester=semester, availableBooks=availableBooks, allusers=allusers)
+                numbooksoverdue=numbooksoverdue,parentcontacts=parentcontacts, allrequests=allrequests, bookTitles = bookTitles,
+                courses = courses,year=year, semester=semester, availableBooks=availableBooks, allusers=allusers)
 
 
 ### PAGES (ROUTES): ###
@@ -288,7 +293,26 @@ def return_book(bookid):
 def index():
     global user
     user = None # reset it when going to login
+    updateamountdue()
     return render_template('login.html')
+
+#update amounts due in students
+def updateamountdue():
+    query = "SELECT * FROM book WHERE duedate IS NOT NULL"
+    cursor.execute(query)
+    checkedout = [tup2dict(x, 'book') for x in cursor.fetchall()]
+    query = "SELECT studentid FROM student"
+    cursor.execute(query)
+    studs={tup[0]:0 for tup in cursor.fetchall()}
+    for b in checkedout:
+        if b['duedate'] < date.today():
+            studs[b['studentid']] += b['cost']
+    for studid in studs:
+        query = "UPDATE student SET amountdue = {} WHERE studentid={}".format(studs[studid],studid)
+        cursor.execute(query)
+        conn.commit()
+    query = "SELECT studentid,amountdue FROM student"
+    cursor.execute(query)
 
 if __name__ == '__main__':
     app.run()

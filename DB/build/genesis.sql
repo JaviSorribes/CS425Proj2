@@ -36,7 +36,7 @@ CREATE TABLE student
   studentid INT NOT NULL AUTO_INCREMENT,
   firstname VARCHAR(20) NOT NULL,
   lastname VARCHAR(20) NOT NULL,
-  amountdue NUMERIC(5,2),
+  amountdue NUMERIC(5,2) NOT NULL DEFAULT 0,
   advisorid INT NOT NULL,
   PRIMARY KEY (studentid),
   FOREIGN KEY (advisorid) REFERENCES teacher(teacherid)

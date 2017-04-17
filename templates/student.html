@@ -198,7 +198,7 @@
 <!--THE STUDENT FEES TAB IS HANDLED HERE-->
     <div id="fees" class="tab-pane fade">
       <h3>Your Fees</h3>
-        <p>You have a total of <em>BOOKTOTAL</em> books overdue for a cost of <em>$TOTALFEE</em>.</p>
+        <p>You have a total of <em>{{ numbooksoverdue(user['studentid']) }}</em> books overdue for a cost of <em>${{ user['amountdue'] }}</em>.</p>
         <p>You must handle all of your fees in order to graduate.
         </p>
         <table class="table table-bordered table-hover">
@@ -227,7 +227,7 @@
               <th></th>
               <th></th>
               <th></th>
-              <th>Total DUE: {{ allbooksstudentfees(user['studentid'])|sum(attribute='cost')}}</th>
+              <th>Total DUE: {{ user['amountdue'] }}</th>
               <th></th>
             </tr>
           </tbody>
