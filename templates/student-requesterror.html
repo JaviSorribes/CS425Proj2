@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CS425 Project</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width-device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://adityaparakh.000webhostapp.com/bootstrap.min.css" >
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  
+<style>
+.jumbotron{
+  background-color:#29AB8D;
+  color:white;
+}  
+.jumbotron p{
+  color:black;
+  font-size: 40px;
+  text-align:left;
+  padding: 10px;
+}
+.tab-content{
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  padding: 10px;
+}
+.nav-tabs{
+  margin-bottom: 0;
+}
+.nav-tabs ul{
+  color:#0f0f0f;
+}
+</style>
+</head>
+<body>
+
+<!--<div class="container">
+  <ul class="nav nav-tabs bg-info">
+    <li class="active"><a data-toggle="tab" href="#overview">Overview</a></li>
+    <li><a data-toggle="tab" href="#books">Your Books</a></li>
+    <li><a data-toggle="tab" href="#fees">Fees</a></li>
+    <li><a data-toggle="tab" href="#contact">Contact Us</a></li>
+    <li><a data-toggle="tab" href="#userInfo">User Info</a></li>
+  </ul>
+  <ul class="nav nav-tabs bg-info pull-right">
+    <li><a data-tobble="tab" href="#">Logout</a></li>
+  </ul>
+  <div class="tab-content">
+    <div id="overview" class="tab-pane fade in active">
+      <h3>Overview</h3>
+        <p>A brief summary of your account
+        </p>
+    </div>
+    <div id="books" class="tab-pane fade">
+      <h3>Your Books</h3>
+        <p>A brief summary of the books that you possess
+        </p>
+    </div>
+    <div id="fees" class="tab-pane fade">
+      <h3>Your Fees</h3>
+        <p>A brief summary of the balance that you owe
+        </p>
+    </div>
+    <div id="contact" class="tab-pane fade">
+      <h3>Your Books</h3>
+        <p>A list of some contacts that will be useful
+        </p>
+    </div>
+    <div id="userInfo" class="tab-pane fade">
+      <h3>Your Contact Information</h3>
+        <p>Verify that this information is correct
+        </p>
+    </div>
+  </div>
+</div>
+-->
+   
+<nav class="navbar navbar-fixed-top">
+  <div class="container bg-info">
+    <ul class="nav navbar-nav">
+      <p class="navbar-text">High School Library</p>
+      <li class="active"><a data-toggle="tab" href="#overview">Overview</a></li>
+      <li><a data-toggle="tab" href="#books">Books</a></li>
+      <li><a data-toggle="tab" href="#fees">Your Fees</a></li>
+      <li><a data-toggle="tab" href="#contact">Contact Us</a></li>
+      <li><a data-toggle="tab" href="#userInfo">User Info</a></li>
+    </ul> 
+    <ul class="nav navbar-nav navbar-right" style="padding-right:10px">
+      <p class="navbar-text">Signed in as: Student</p>
+        <li><button class="btn navbar-btn"><a href="/">Logout</a></button></li>
+    </ul>
+  </div>
+  
+</nav>
+<div class="container bg-muted" style="padding:0px; background-color:white">
+    <div class="tab-content" style="margin-top:30px">
+    
+<!--THE OVERVIEW FOR THE USER IS SHOWN HERE-->    
+    <div id="overview" class="tab-pane fade in active">
+      <h3>Overview</h3>
+        <p>Your advisor is {{findadvisor(user['advisorid'])[0]['firstname']}} {{findadvisor(user['advisorid'])[0]['lastname']}}
+        </p>
+      <h3>ERROR REQUESTING BOK. IS YOUR STUFF ok?!!!!!</h3>
+      <h3>Request a book</h3>
+      <form action="/request_book_student" class="form-inline">
+          <div class="form-group">
+            <input list = "course_list" type="text" name="coursename" class="form-control" placeholder="Course Name">
+            <input list = "year_list" type="text" name="courseyear" class="form-control" placeholder="Course Year">
+            <input list = "semester_list"type="text" name="coursesem" class="form-control" placeholder="Course Semester">
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+       <datalist id = "course_list">
+            {%  for data in courses() %}
+                <option value="{{ data['name'] }}">
+            {% endfor %}
+        </datalist>
+        <datalist id = "year_list">
+            {%  for data in year() %}
+                <option value="{{ data['year'] }}">
+            {% endfor %}
+        </datalist>
+      <datalist id = "semester_list">
+            {%  for data in semester() %}
+                <option value="{{ data['semester'] }}">
+            {% endfor %}
+        </datalist>
+    </div>
+
+<!--THE USERS BOOKS ARE HANDLED HERE-->
+    <div id="books" class="tab-pane fade">
+      <h3>Your Books</h3>
+        <p>Please take care of your books and avoid losing them. They're expensive $$.</p>
+        <p>Overdue books can be found on the Your Fees tab</p>
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th class="col-sm-3">Name</th>
+              <th class="col-sm-1">ISBN #</th>
+              <th class="col-sm-1">Course</th>
+              <th class="col-sm-1">Check Out Date</th>
+              <th class="col-sm-1">Due Date</th>
+              <th class="col-sm-2">Cost to Replace</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for data in allbooksstudent(user['studentid']) %}
+            {% if today <= data['duedate'] %}
+            <tr>
+              <th>{{ data['title'] }}</th>
+              <th>{{ data['isbn'] }}</th>
+              <th>{{ data['coursename'] }}</th>
+              <th>{{ data['datecheckedout'] }}</th>
+              <th>{{ data['duedate'] }}</th>
+              <th>{{ data['cost'] }}<button><a href="/borrow_book/{{ data['bookid'] }}">Return</a></button></th>
+            </tr>
+            {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+        
+        <h3>Available Books</h3>
+        <p>The following books are available for checkout from your account</p>
+        <!--
+        <form class="form-inline">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Enter Book Name"> 
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+        -->
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th class="col-sm-3">Name</th>
+              <th class="col-sm-1">ISBN #</th>
+              <th class="col-sm-1">Course</th>
+              <th class="col-sm-1">Check Out Date</th>
+              <th class="col-sm-1">Due Date</th>
+              <th class="col-sm-2">Cost to Replace</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for data in allbooksstudentavailable(user['studentid']) %}
+            <tr>
+              <th>{{ data['title'] }}</th>
+              <th>{{ data['isbn'] }}</th>
+              <th>{{ data['coursename'] }}</th>
+              <th>Check Out Date</th>
+              <th>Due Date</th>
+              <th>Cost to Replace<button><a href="/borrow_book/{{ user['studentid'] }}/{{ data['bookid'] }}">Borrow</a></button></th>
+              <!--Student will be able to only borrow books that have been assigned-->
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+    
+<!--THE STUDENT FEES TAB IS HANDLED HERE-->
+    <div id="fees" class="tab-pane fade">
+      <h3>Your Fees</h3>
+        <p>You have a total of <em>BOOKTOTAL</em> books overdue for a cost of <em>$TOTALFEE</em>.</p>
+        <p>You must handle all of your fees in order to graduate.
+        </p>
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th class="col-sm-4">Book Name</th>
+              <th class="col-sm-1">ISBN #</th>
+              <th class="col-sm-2">Course</th>
+              <th class="col-sm-1">Due Date</th>
+              <th class="col-sm-2">Amount Due</th>
+            </tr>  
+          </thead>
+          <tbody>
+            {% for data in allbooksstudentfees(user['studentid']) %}
+            {% if today >= data['duedate'] %}
+            <tr>
+              <th>{{ data['title'] }}</th>
+              <th>{{ data['isbn'] }}</th>
+              <th>{{ data['coursename'] }}</th>
+              <th>{{ data['duedate'] }}</th>
+              <th>{{ data['cost'] }}<button><a href="/borrow_book/{{ data['bookid'] }}">Return</a></button></th>
+            </tr>
+            {% endif %}
+            {% endfor %}
+            <tr>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th>Total DUE: {{ allbooksstudentfees(user['studentid'])|sum(attribute='cost')}}</th>
+              <th></th>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+
+<!--THE RELEVANT CONTACT INFORMATION IS HANDLED HERE-->
+    <div id="contact" class="tab-pane fade">
+      <!--<h3 style="text-align:center">Useful Contacts</h3>-->
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+      <h4><u><br>CONTACT 1</u></h4>
+        <p>
+          Contact for disputes regarding lost books<br>
+          Phone #:(PHONE 1) <br>
+          Email:(EMAIL 1)
+        </p>
+      <h4><u><br>CONTACT 2</u></h4>
+        <p>
+          Contact to report an issue to the school library.<br>
+          Phone #:(PHONE 2) <br>
+          Email:(EMAIL 2)
+        </p>
+      <h4><u><br>CONTACT 3</u></h4>
+        <p>
+          Contact for other questions.<br>
+          Phone #:(PHONE 3) <br>
+          Email:(EMAIL 3)
+        </p>
+      </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding-top:50px">
+        <table class="table table-hover table-default">
+        <p>The Library is open during the following times:</p>
+          <tbody>
+            <tr>
+              <th>Sunday</th>
+              <th>Closed</th>
+            </tr>
+            <tr>
+              <th>Monday</th>
+              <th>7:00am - 5:00pm</th>
+            </tr>
+            <tr>
+              <th>Tuesday</th>
+              <th>7:00am - 5:00pm</th>
+            </tr>
+            <tr>
+              <th>Wednesday</th>
+              <th>7:00am - 5:00pm</th>
+            </tr>
+            <tr>
+              <th>Thursday</th>
+              <th>7:00am - 5:00pm</th>
+            </tr>
+            <tr>
+              <th>Friday</th>
+              <th>7:00am - 5:00pm</th>
+            </tr>                 
+            <tr>
+              <th>Saturday</th>
+              <th>Closed</th>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+    </div>
+    
+<!--THE 0 INFORMATION IS HANDLED HERE-->
+    <div id="userInfo" class="tab-pane fade">
+      <h3>Keep your contact information updated to avoid missing important dates!</h3>
+        <p>
+          {% set printname = {'foo':True} %}
+          {% for data in parentcontacts(user['studentid']) %}
+          {% if printname.foo %}
+          {{ data['firstname'] }} {{ data['lastname'] }}<br>
+          {% if printname.update({'foo':False}) %}
+          {% endif %}
+          {% endif %}
+          {{ data['contact'] }}<br>
+          {% endfor %}
+        </p>
+    </div>
+  </div>
+  </div>
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>
