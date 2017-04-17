@@ -102,14 +102,29 @@
       <h3>Request a book</h3>
       <form action="/request_book_teacher" class="form-inline">
           <div class="form-group">
-            <input type="text" name="bookisbn" class="form-control" placeholder="Book ISBN">
-            <input type="text" name="coursename" class="form-control" placeholder="Course Name">
-            <input type="text" name="courseyear" class="form-control" placeholder="Course Year">
-            <input type="text" name="coursesem" class="form-control" placeholder="Course Semester">
+            <input type="text"  name="bookisbn" class="form-control" placeholder="Book ISBN">
+            <input list = "course_list" type="text" name="coursename" class="form-control" placeholder="Course Name">
+            <input list = "year_list" type="text" name="courseyear" class="form-control" placeholder="Course Year">
+            <input list = "semester_list"type="text" name="coursesem" class="form-control" placeholder="Course Semester">
             <input type="number" name="quantity" class="form-control" placeholder="Quantity">
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
+       <datalist id = "course_list">
+            {%  for data in courses() %}
+                <option value="{{ data['name'] }}">
+            {% endfor %}
+        </datalist>
+        <datalist id = "year_list">
+            {%  for data in year() %}
+                <option value="{{ data['year'] }}">
+            {% endfor %}
+        </datalist>
+      <datalist id = "semester_list">
+            {%  for data in semester() %}
+                <option value="{{ data['semester'] }}">
+            {% endfor %}
+        </datalist>
     </div>
 
 <!--THE USERS BOOKS ARE HANDLED HERE-->

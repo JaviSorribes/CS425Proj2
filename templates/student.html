@@ -98,7 +98,7 @@
 <!--THE OVERVIEW FOR THE USER IS SHOWN HERE-->    
     <div id="overview" class="tab-pane fade in active">
       <h3>Overview</h3>
-        <p>A brief summary of your account
+        <p>Your advisor is: {{findadvisor(user['advisorid'])['firstname']}} {{findadvisor(user['advisorid'])['lastname']}}
         </p>
     </div>
 
@@ -106,6 +106,7 @@
     <div id="books" class="tab-pane fade">
       <h3>Your Books</h3>
         <p>Please take care of your books and avoid losing them. They're expensive $$.</p>
+        <p>Overdue books can be found on the Your Fees tab</p>
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
@@ -272,7 +273,14 @@
 <!--THE 0 INFORMATION IS HANDLED HERE-->
     <div id="userInfo" class="tab-pane fade">
       <h3>Keep your contact information updated to avoid missing important dates!</h3>
-        <p>{% for data in parentcontacts(user['studentid']) %}
+        <p>
+          {% set printname = {'foo':True} %}
+          {% for data in parentcontacts(user['studentid']) %}
+          {% if printname.foo %}
+          {{ data['firstname'] }} {{ data['lastname'] }}<br>
+          {% if printname.update({'foo':False}) %}
+          {% endif %}
+          {% endif %}
           {{ data['contact'] }}<br>
           {% endfor %}
         </p>

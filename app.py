@@ -86,7 +86,16 @@ def sqlcommands():
         return [tup2dict(tup,'book') for tup in cursor.fetchall()]
 
     def courses():
-        query = "SELECT "
+        query = "SELECT DISTINCT(name) from COURSE"
+        cursor.execute(query)
+        course_schema = ['name']
+        return [tup2dict(tup, course_schema) for tup in cursor.fetchall()]
+
+    def findadvisor(advisorid):
+        query = "SELECT * FROM teacher WHERE teacherid={}".format(advisorid)
+        cursor.execute(query)
+        return [tup2dict(tup,'teacher') for tup in cursor.fetchall()]
+
     def groupBooks():
         query = "SELECT isbn, title, coursename, courseyear, coursesemester, COUNT(*) as quantity, cost FROM book GROUP BY isbn, coursename, courseyear, coursesemester ORDER BY coursename, courseyear, coursesemester"
         cursor.execute(query)
@@ -94,13 +103,26 @@ def sqlcommands():
         return [tup2dict(tup, book_Group) for tup in cursor.fetchall()]
 
     def parentcontacts(studentid):
-        query = "SELECT parent_contact.contact, parent_contact.lastname, parent_contact.firstname FROM parent_contact LEFT JOIN has ON parent_contact.lastname=has.lastname AND parent_contact.firstname=has.firstname WHERE studentid={}".format(studentid)
+        query = "SELECT parent.lastname, parent.firstname, parent_contact.contact FROM has LEFT JOIN parent ON has.parentid=parent.parentid LEFT JOIN parent_contact ON parent.parentid=parent_contact.parentid WHERE studentid={}".format(studentid)
         cursor.execute(query)
-        parent_contact_schema = schemas['parent_contact']
-        return [tup2dict(tup,'parent_contact') for tup in cursor.fetchall()]
+        parentdisplay_schema = ['lastname', 'firstname', 'contact']
+        return [tup2dict(tup, parentdisplay_schema) for tup in cursor.fetchall()]
+    def semester():
+        query = "SELECT DISTINCT(semester) from COURSE"
+        cursor.execute(query)
+        course_schema = ['semester']
+        return [tup2dict(tup, course_schema) for tup in cursor.fetchall()]
 
-    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, groupBooks=groupBooks, parentcontacts=parentcontacts, allrequests=allrequests, bookTitles = bookTitles,
-                allusers=allusers, availableBooks=availableBooks)
+    def year():
+        query = "SELECT DISTINCT(year) from COURSE"
+        cursor.execute(query)
+        course_schema = ['year']
+        return [tup2dict(tup, course_schema) for tup in cursor.fetchall()]
+
+    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable,
+                allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, findadvisor=findadvisor, groupBooks=groupBooks,
+                parentcontacts=parentcontacts, allrequests=allrequests, bookTitles = bookTitles, courses = courses,
+                year=year, semester=semester, availableBooks=availableBooks, allusers=allusers)
 
 
 ### PAGES (ROUTES): ###
