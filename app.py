@@ -70,7 +70,15 @@ def sqlcommands():
         query = "SELECT * FROM book_request"
         cursor.execute(query)
         return [tup2dict(tup, 'book_request') for tup in cursor.fetchall()]
-
+    def allusers():
+        query = "(SELECT studentid AS id,firstname,lastname,'student' AS access_level FROM student) UNION (SELECT teacherid AS id,firstname,lastname,'teacher' AS access_level FROM teacher) UNION (SELECT adminid AS id,firstname,lastname,'admin' AS access_level FROM admin);"
+        cursor.execute(query)
+        user_group = ['id','firstname','lastname','access_level']
+        return [tup2dict(tup,user_group) for tup in cursor.fetchall()]
+    def availableBooks():   #Returns data on the availability of all the books
+        query = "select COUNT(*) AS total_num_books, COUNT(datecheckedout) AS total_checked_out, COUNT(*)-COUNT(datecheckedout) AS available FROM book;"
+        cursor.execute(query)
+        return cursor.fetchone()
     def bookTitles():   #Returns the titles for the searching of the books
         query = "SELECT * FROM book GROUP BY title"
         cursor.execute(query)
@@ -99,7 +107,6 @@ def sqlcommands():
         cursor.execute(query)
         parentdisplay_schema = ['lastname', 'firstname', 'contact']
         return [tup2dict(tup, parentdisplay_schema) for tup in cursor.fetchall()]
-
     def semester():
         query = "SELECT DISTINCT(semester) from COURSE"
         cursor.execute(query)
@@ -111,7 +118,11 @@ def sqlcommands():
         cursor.execute(query)
         course_schema = ['year']
         return [tup2dict(tup, course_schema) for tup in cursor.fetchall()]
-    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable, allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, findadvisor=findadvisor, groupBooks=groupBooks, parentcontacts=parentcontacts, allrequests=allrequests, bookTitles = bookTitles, courses = courses, year=year, semester=semester)
+
+    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable,
+                allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, findadvisor=findadvisor, groupBooks=groupBooks,
+                parentcontacts=parentcontacts, allrequests=allrequests, bookTitles = bookTitles, courses = courses,
+                year=year, semester=semester, availableBooks=availableBooks, allusers=allusers)
 
 
 ### PAGES (ROUTES): ###
@@ -159,41 +170,6 @@ def books():
     else:
         return render_template('admin-bookerror.html',user=user)
 
-@app.route("/request_book_teacher")
-def request_book_teacher():
-    isbn = request.args["bookisbn"]
-    course_name = request.args["coursename"]
-    quantity = request.args["quantity"]
-    course_year = request.args["courseyear"]
-    course_sem = request.args["coursesem"]
-    methodcalls.book_all(isbn)
-    cost = methodcalls.book_price(isbn)
-    if cost == "error":
-        print("error")
-    title = methodcalls.book_title(isbn)
-    courses_list = sqlcommands()["courses"]()
-    courses_list_new = set()
-    year_list = sqlcommands()["year"]()
-    year_list_new = set()
-    semester_list = sqlcommands()["semester"]()
-    semester_list_new = set()
-    for courses in courses_list:
-        courses_list_new.add(courses["name"])
-    for courses in year_list:
-        year_list_new.add(courses["year"])
-    for courses in semester_list:
-        semester_list_new.add(courses["semester"])
-
-    if course_name not in courses_list_new or course_year not in year_list_new or course_sem not in semester_list_new:
-        return render_template("teacher-requesterror.html")
-    else:
-        query = "INSERT INTO book_request (isbn,cost,title,coursename,courseyear,coursesemester,requestedby,quantity) " \
-                "VALUES ({},{},\"{}\",\"{}\",\"{}\",\"{}\",'teacher',{});".format(isbn, cost, title, course_name,
-                                                                                  course_year, course_sem, quantity)
-        cursor.execute(query)
-        conn.commit()
-        return render_template("teacher-requestdone.html")
-
 @app.route("/request_book_student")
 def request_book_student():
     course_name = request.args["coursename"]
@@ -203,7 +179,7 @@ def request_book_student():
     cursor.execute(query)
     result_dic = [tup2dict(tup, schemas["course"]) for tup in cursor.fetchall()]
     if result_dic:
-        print("success")
+        #print("success")
 
         query = "SELECT * FROM book WHERE coursename = \"{}\" and courseyear = {} and coursesemester = \"{}\"".format(course_name,course_year,course_sem)
         cursor.execute(query)
@@ -223,6 +199,26 @@ def request_book_student():
     else:
         print("error")
         return render_template("student-requesterror.html", user=user, today=date.today())
+
+@app.route("/request_book_teacher")
+def request_book_teacher():
+    isbn = request.args["bookisbn"]
+    course_name = request.args["coursename"]
+    quantity = request.args["quantity"]
+    course_year = request.args["courseyear"]
+    course_sem = request.args["coursesem"]
+    methodcalls.book_all(isbn)
+    cost = methodcalls.book_price(isbn)
+    if cost == "error":
+        print("error")
+    title = methodcalls.book_title(isbn)
+
+    query = "INSERT INTO book_request (isbn,cost,title,coursename,courseyear,coursesemester,requestedby,quantity) " \
+    "VALUES ({},{},\"{}\",\"{}\",\"{}\",\"{}\",'teacher',{});".format(isbn,cost,title,course_name,course_year,course_sem,quantity)
+    cursor.execute(query)
+    conn.commit()
+    return render_template("teacher-requestdone.html")
+
 @app.route("/book_info/<isbn>")
 def book_info(isbn):
     book_isbn = isbn
