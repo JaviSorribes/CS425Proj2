@@ -78,7 +78,7 @@ def sqlcommands():
     def availableBooks():   #Returns data on the availability of all the books
         query = "select COUNT(*) AS total_num_books, COUNT(datecheckedout) AS total_checked_out, COUNT(*)-COUNT(datecheckedout) AS available FROM book;"
         cursor.execute(query)
-        return [tup for tup in cursor.fetchall()]
+        return cursor.fetchone()
     def bookTitles():   #Returns the titles for the searching of the books
         query = "SELECT * FROM book GROUP BY title"
         cursor.execute(query)

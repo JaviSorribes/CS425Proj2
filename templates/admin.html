@@ -91,11 +91,11 @@
     <div id="books" class="tab-pane fade">
       <h3>Book Database</h3>
       <p>
-          {% data = availableBooks() %}
+          {% set data = availableBooks() %}
           Total number of books = {{ data[0] }}.<br>
           Total number borrowed = {{ data[1] }}.<br>
           Total number available = {{ data[2] }}.<br>
-          {% endfor %}
+
       </p>
       <form action="/books" class="form-inline">
           <div class="form-group">
