@@ -53,7 +53,9 @@ def sqlcommands():
         book_schema = schemas['book']
         return [tup2dict(tup,'book') for tup in cursor.fetchall()]
     def allbooksstudentavailable(studentid):
-        query = "SELECT DISTINCT book.bookid, book.isbn, book.cost, book.duedate, book.datecheckedout, book.title, book.coursename, book.courseyear, book.coursesemester, book.studentid FROM (SELECT takes.name, takes.year, takes.semester FROM student RIGHT JOIN takes ON student.studentid=takes.studentid WHERE student.studentid={}) AS dtable RIGHT JOIN book ON book.coursename=dtable.name AND book.courseyear=dtable.year AND book.coursesemester=dtable.semester WHERE book.studentid is null AND dtable.name is not null".format(studentid)
+        #query = "SELECT DISTINCT book.bookid, book.isbn, book.cost, book.duedate, book.datecheckedout, book.title, book.coursename, book.courseyear, book.coursesemester, book.studentid FROM (SELECT takes.name, takes.year, takes.semester FROM student RIGHT JOIN takes ON student.studentid=takes.studentid WHERE student.studentid={}) AS dtable RIGHT JOIN book ON book.coursename=dtable.name AND book.courseyear=dtable.year AND book.coursesemester=dtable.semester WHERE book.studentid is null AND dtable.name is not null".format(studentid)
+        query = "SELECT dt2.bookid, dt2.isbn, dt2.cost, dt2.duedate, dt2.datecheckedout, dt2.title, dt2.coursename, dt2.courseyear, dt2.coursesemester, dt2.studentid FROM (SELECT book.bookid, book.isbn, book.cost, book.duedate, book.datecheckedout, book.title, book.coursename, book.courseyear, book.coursesemester, book.studentid FROM book RIGHT JOIN (SELECT * FROM takes WHERE studentid={}) AS dt1 ON book.coursename=dt1.name AND book.courseyear=dt1.year AND book.coursesemester=dt1.semester WHERE book.studentid IS NULL) AS dt2 LEFT JOIN (SELECT * from book where studentid={}) AS dt3 ON dt2.coursename=dt3.coursename AND dt2.courseyear=dt2.courseyear AND dt2.coursesemester=dt3.coursesemester WHERE dt3.bookid IS NULL".format(studentid,studentid)
+
         cursor.execute(query)
         book_schema = schemas['book']
         return [tup2dict(tup,'book') for tup in cursor.fetchall()]

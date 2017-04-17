@@ -174,8 +174,8 @@
               <th class="col-sm-3">Name</th>
               <th class="col-sm-1">ISBN #</th>
               <th class="col-sm-1">Course</th>
-              <th class="col-sm-1">Check Out Date</th>
-              <th class="col-sm-1">Due Date</th>
+              <th class="col-sm-1">Year</th>
+              <th class="col-sm-1">Semester</th>
               <th class="col-sm-2">Cost to Replace</th>
             </tr>
           </thead>
@@ -185,8 +185,8 @@
               <th>{{ data['title'] }}</th>
               <th>{{ data['isbn'] }}</th>
               <th>{{ data['coursename'] }}</th>
-              <th>Check Out Date</th>
-              <th>Due Date</th>
+              <th>{{ data['courseyear'] }}</th>
+              <th>{{ data['coursesemester'] }}</th>
               <th>Cost to Replace<button><a href="/borrow_book/{{ user['studentid'] }}/{{ data['bookid'] }}">Borrow</a></button></th>
               <!--Student will be able to only borrow books that have been assigned-->
             </tr>
