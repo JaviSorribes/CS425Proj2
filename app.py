@@ -238,6 +238,22 @@ def borrow_book(studentid, bookid):
     conn.commit()
     return render_template('student.html', user=user, today=date.today())
 
+@app.route("/remove_user/<id>/<access_level>")
+def remove_user(id,access_level):
+    query= "SELECT * FROM {} WHERE {}id={}".format(access_level,access_level,id)
+    cursor.execute(query)
+    if access_level == 'student':
+        answer = [tup2dict(tup, 'student') for tup in cursor.fetchall()]
+    elif access_level == 'teacher':
+        answer = [tup2dict(tup, 'teacher') for tup in cursor.fetchall()]
+    else:
+        answer = [tup2dict(tup, 'admin') for tup in cursor.fetchall()]
+    answer = answer[0]
+    query = "DELETE FROM {} WHERE {}id = {}".format(access_level,access_level,id)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('admin.html', user=user, today=date.today())
+
 @app.route("/grant_request/<requestid>")
 def book_request_grant(requestid):
     query = "SELECT * FROM book_request WHERE requestid = {}".format(requestid)
