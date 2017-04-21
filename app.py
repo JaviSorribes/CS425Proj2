@@ -30,6 +30,7 @@ schemas = { 'user': ['username', 'userpass', 'role', 'id'],
 	'has': ['studentid', 'parentid'],
 	'takes': ['studentid', 'name', 'year', 'semester'],
 	'controls': ['adminid', 'bookid'] }
+
 # Take tuple, create dictionary:
 def tup2dict(tup,schema): #assumes right arguments
     if isinstance(schema,str): #allows you to give the name of one of the default schemas
@@ -41,96 +42,99 @@ def tup2dict(tup,schema): #assumes right arguments
 ### SQL COMMANDS to be called dynamically from the templates: ###
 @app.context_processor
 def sqlcommands():
-    #define as many commands as needed here, and add them to the dict returned
-    def allbooks():
-        query = "SELECT * FROM book"
-        cursor.execute(query)
-        book_schema = schemas['book']
-        return [tup2dict(tup,'book') for tup in cursor.fetchall()]
-    def allbooksstudent(studentid):
-        query = "SELECT * FROM book WHERE book.studentid={}".format(studentid)
-        cursor.execute(query)
-        book_schema = schemas['book']
-        return [tup2dict(tup,'book') for tup in cursor.fetchall()]
-    def allbooksstudentavailable(studentid):
-        #query = "SELECT DISTINCT book.bookid, book.isbn, book.cost, book.duedate, book.datecheckedout, book.title, book.coursename, book.courseyear, book.coursesemester, book.studentid FROM (SELECT takes.name, takes.year, takes.semester FROM student RIGHT JOIN takes ON student.studentid=takes.studentid WHERE student.studentid={}) AS dtable RIGHT JOIN book ON book.coursename=dtable.name AND book.courseyear=dtable.year AND book.coursesemester=dtable.semester WHERE book.studentid is null AND dtable.name is not null".format(studentid)
-        query = "SELECT dt2.bookid, dt2.isbn, dt2.cost, dt2.duedate, dt2.datecheckedout, dt2.title, dt2.coursename, dt2.courseyear, dt2.coursesemester, dt2.studentid FROM (SELECT book.bookid, book.isbn, book.cost, book.duedate, book.datecheckedout, book.title, book.coursename, book.courseyear, book.coursesemester, book.studentid FROM book RIGHT JOIN (SELECT * FROM takes WHERE studentid={}) AS dt1 ON book.coursename=dt1.name AND book.courseyear=dt1.year AND book.coursesemester=dt1.semester WHERE book.studentid IS NULL) AS dt2 LEFT JOIN (SELECT * from book where studentid={}) AS dt3 ON dt2.coursename=dt3.coursename AND dt2.courseyear=dt2.courseyear AND dt2.coursesemester=dt3.coursesemester WHERE dt3.bookid IS NULL ORDER BY dt2.coursename, dt2.courseyear, dt2.coursesemester".format(studentid,studentid)
+    class allmethods:
+        #define as many commands as needed here (in alphabetical order)
+        def allbooks():
+            query = "SELECT * FROM book"
+            cursor.execute(query)
+            book_schema = schemas['book']
+            return [tup2dict(tup,'book') for tup in cursor.fetchall()]
+        def allbooksstudent(studentid):
+            query = "SELECT * FROM book WHERE book.studentid={}".format(studentid)
+            cursor.execute(query)
+            book_schema = schemas['book']
+            return [tup2dict(tup,'book') for tup in cursor.fetchall()]
+        def allbooksstudentavailable(studentid):
+            #query = "SELECT DISTINCT book.bookid, book.isbn, book.cost, book.duedate, book.datecheckedout, book.title, book.coursename, book.courseyear, book.coursesemester, book.studentid FROM (SELECT takes.name, takes.year, takes.semester FROM student RIGHT JOIN takes ON student.studentid=takes.studentid WHERE student.studentid={}) AS dtable RIGHT JOIN book ON book.coursename=dtable.name AND book.courseyear=dtable.year AND book.coursesemester=dtable.semester WHERE book.studentid is null AND dtable.name is not null".format(studentid)
+            query = "SELECT dt2.bookid, dt2.isbn, dt2.cost, dt2.duedate, dt2.datecheckedout, dt2.title, dt2.coursename, dt2.courseyear, dt2.coursesemester, dt2.studentid FROM (SELECT book.bookid, book.isbn, book.cost, book.duedate, book.datecheckedout, book.title, book.coursename, book.courseyear, book.coursesemester, book.studentid FROM book RIGHT JOIN (SELECT * FROM takes WHERE studentid={}) AS dt1 ON book.coursename=dt1.name AND book.courseyear=dt1.year AND book.coursesemester=dt1.semester WHERE book.studentid IS NULL) AS dt2 LEFT JOIN (SELECT * from book where studentid={}) AS dt3 ON dt2.coursename=dt3.coursename AND dt2.courseyear=dt2.courseyear AND dt2.coursesemester=dt3.coursesemester WHERE dt3.bookid IS NULL ORDER BY dt2.coursename, dt2.courseyear, dt2.coursesemester".format(studentid,studentid)
 
-        cursor.execute(query)
-        book_schema = schemas['book']
-        return [tup2dict(tup,'book') for tup in cursor.fetchall()]
-    def allbooksstudentfees(studentid):
-        query = "SELECT * FROM book WHERE book.studentid={} AND book.duedate<'{}'".format(studentid,date.today().isoformat())
-        cursor.execute(query)
-        book_schema = schemas['book']
-        return [tup2dict(tup,'book') for tup in cursor.fetchall()]
-    def allstudents(): #an example
-        query = "SELECT * FROM student"
-        cursor.execute(query)
-        return [tup2dict(tup,'student') for tup in cursor.fetchall()]
-    def allrequests():
-        query = "SELECT * FROM book_request"
-        cursor.execute(query)
-        return [tup2dict(tup, 'book_request') for tup in cursor.fetchall()]
-    def allusers():
-        query = "(SELECT studentid AS id,firstname,lastname,'student' AS access_level FROM student) UNION (SELECT teacherid AS id,firstname,lastname,'teacher' AS access_level FROM teacher) UNION (SELECT adminid AS id,firstname,lastname,'admin' AS access_level FROM admin);"
-        cursor.execute(query)
-        user_group = ['id','firstname','lastname','access_level']
-        return [tup2dict(tup,user_group) for tup in cursor.fetchall()]
-    def availableBooks():   #Returns data on the availability of all the books
-        query = "select COUNT(*) AS total_num_books, COUNT(datecheckedout) AS total_checked_out, COUNT(*)-COUNT(datecheckedout) AS available FROM book;"
-        cursor.execute(query)
-        return cursor.fetchone()
-    def bookTitles():   #Returns the titles for the searching of the books
-        query = "SELECT * FROM book GROUP BY title"
-        cursor.execute(query)
-        #temp = [s for s in cursor.fetchall()]
-        return [tup2dict(tup,'book') for tup in cursor.fetchall()]
+            cursor.execute(query)
+            book_schema = schemas['book']
+            return [tup2dict(tup,'book') for tup in cursor.fetchall()]
+        def allbooksstudentfees(studentid):
+            query = "SELECT * FROM book WHERE book.studentid={} AND book.duedate<'{}'".format(studentid,date.today().isoformat())
+            cursor.execute(query)
+            book_schema = schemas['book']
+            return [tup2dict(tup,'book') for tup in cursor.fetchall()]
+        def allstudents(): #an example
+            query = "SELECT * FROM student"
+            cursor.execute(query)
+            return [tup2dict(tup,'student') for tup in cursor.fetchall()]
+        def allrequests():
+            query = "SELECT * FROM book_request"
+            cursor.execute(query)
+            return [tup2dict(tup, 'book_request') for tup in cursor.fetchall()]
+        def allusers():
+            query = "(SELECT studentid AS id,firstname,lastname,'student' AS access_level FROM student) UNION (SELECT teacherid AS id,firstname,lastname,'teacher' AS access_level FROM teacher) UNION (SELECT adminid AS id,firstname,lastname,'admin' AS access_level FROM admin);"
+            cursor.execute(query)
+            user_group = ['id','firstname','lastname','access_level']
+            return [tup2dict(tup,user_group) for tup in cursor.fetchall()]
+        def availableBooks():   #Returns data on the availability of all the books
+            query = "select COUNT(*) AS total_num_books, COUNT(datecheckedout) AS total_checked_out, COUNT(*)-COUNT(datecheckedout) AS available FROM book;"
+            cursor.execute(query)
+            return cursor.fetchone()
+        def bookTitles():   #Returns the titles for the searching of the books
+            query = "SELECT * FROM book GROUP BY title"
+            cursor.execute(query)
+            #temp = [s for s in cursor.fetchall()]
+            return [tup2dict(tup,'book') for tup in cursor.fetchall()]
 
-    def courses():
-        query = "SELECT DISTINCT(name) from COURSE"
-        cursor.execute(query)
-        course_schema = ['name']
-        return [tup2dict(tup, course_schema) for tup in cursor.fetchall()]
+        def courses():
+            query = "SELECT DISTINCT(name) from COURSE"
+            cursor.execute(query)
+            course_schema = ['name']
+            return [tup2dict(tup, course_schema) for tup in cursor.fetchall()]
 
-    def findadvisor(advisorid):
-        query = "SELECT * FROM teacher WHERE teacherid={}".format(advisorid)
-        cursor.execute(query)
-        return [tup2dict(tup,'teacher') for tup in cursor.fetchall()]
+        def findadvisor(advisorid):
+            query = "SELECT * FROM teacher WHERE teacherid={}".format(advisorid)
+            cursor.execute(query)
+            return [tup2dict(tup,'teacher') for tup in cursor.fetchall()]
 
-    def groupBooks():
-        query = "SELECT isbn, title, coursename, courseyear, coursesemester, COUNT(*) as quantity, cost FROM book GROUP BY isbn, coursename, courseyear, coursesemester ORDER BY coursename, courseyear, coursesemester"
-        cursor.execute(query)
-        book_Group = ['isbn', 'title', 'coursename', 'courseyear', 'coursesemester', 'quantity', 'cost']
-        return [tup2dict(tup, book_Group) for tup in cursor.fetchall()]
+        def groupBooks():
+            query = "SELECT isbn, title, coursename, courseyear, coursesemester, COUNT(*) as quantity, cost FROM book GROUP BY isbn, coursename, courseyear, coursesemester ORDER BY coursename, courseyear, coursesemester"
+            cursor.execute(query)
+            book_Group = ['isbn', 'title', 'coursename', 'courseyear', 'coursesemester', 'quantity', 'cost']
+            return [tup2dict(tup, book_Group) for tup in cursor.fetchall()]
 
-    def numbooksoverdue(studentid):
-        query = "SELECT COUNT(*) FROM book WHERE studentid={}".format(studentid)
-        cursor.execute(query)
-        return cursor.fetchone()[0]
+        def numbooksoverdue(studentid):
+            query = "SELECT COUNT(*) FROM book WHERE studentid={}".format(studentid)
+            cursor.execute(query)
+            return cursor.fetchone()[0]
 
-    def parentcontacts(studentid):
-        query = "SELECT parent.lastname, parent.firstname, parent_contact.contact FROM has LEFT JOIN parent ON has.parentid=parent.parentid LEFT JOIN parent_contact ON parent.parentid=parent_contact.parentid WHERE studentid={}".format(studentid)
-        cursor.execute(query)
-        parentdisplay_schema = ['lastname', 'firstname', 'contact']
-        return [tup2dict(tup, parentdisplay_schema) for tup in cursor.fetchall()]
-    def semester():
-        query = "SELECT DISTINCT(semester) from COURSE"
-        cursor.execute(query)
-        course_schema = ['semester']
-        return [tup2dict(tup, course_schema) for tup in cursor.fetchall()]
+        def parentcontacts(studentid):
+            query = "SELECT parent.lastname, parent.firstname, parent_contact.contact FROM has LEFT JOIN parent ON has.parentid=parent.parentid LEFT JOIN parent_contact ON parent.parentid=parent_contact.parentid WHERE studentid={}".format(studentid)
+            cursor.execute(query)
+            parentdisplay_schema = ['lastname', 'firstname', 'contact']
+            return [tup2dict(tup, parentdisplay_schema) for tup in cursor.fetchall()]
+        def semester():
+            query = "SELECT DISTINCT(semester) from COURSE"
+            cursor.execute(query)
+            course_schema = ['semester']
+            return [tup2dict(tup, course_schema) for tup in cursor.fetchall()]
 
-    def year():
-        query = "SELECT DISTINCT(year) from COURSE"
-        cursor.execute(query)
-        course_schema = ['year']
-        return [tup2dict(tup, course_schema) for tup in cursor.fetchall()]
+        def year():
+            query = "SELECT DISTINCT(year) from COURSE"
+            cursor.execute(query)
+            course_schema = ['year']
+            return [tup2dict(tup, course_schema) for tup in cursor.fetchall()]
 
-    return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable,
-                allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, findadvisor=findadvisor, groupBooks=groupBooks,
-                numbooksoverdue=numbooksoverdue,parentcontacts=parentcontacts, allrequests=allrequests, bookTitles = bookTitles,
-                courses = courses,year=year, semester=semester, availableBooks=availableBooks, allusers=allusers)
-
+    ## Doing this instead avoids merge conflicts, since we don't have to change that line (DO NOT TOUCH)
+    _forbidden_names = set(['__weakref__', '__module__', '__dict__', '__doc__'])
+    return {k:v for k,v in allmethods.__dict__.items() if k not in _forbidden_names}
+    #return dict(allbooks=allbooks, allbooksstudent=allbooksstudent, allbooksstudentavailable=allbooksstudentavailable,
+     #           allbooksstudentfees=allbooksstudentfees, allstudents=allstudents, findadvisor=findadvisor, groupBooks=groupBooks,
+      #          numbooksoverdue=numbooksoverdue,parentcontacts=parentcontacts, allrequests=allrequests, bookTitles = bookTitles,
+       #         courses = courses,year=year, semester=semester, availableBooks=availableBooks, allusers=allusers)
 
 ### PAGES (ROUTES): ###
 @app.route("/home", methods=['POST'])
