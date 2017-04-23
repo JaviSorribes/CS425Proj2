@@ -98,6 +98,7 @@
               <th>{{book["coursename"]}}</th>
               <th>{{book["courseyear"]}}</th>
               <th>{{book["cost"]}}</th>
+              <th><button type="submit" class="btn btn-default"><a href="/remove_book/{{ book['bookid'] }}">Remove</a></button></th>
               <th></th>
             </tr>
           {% endfor %}

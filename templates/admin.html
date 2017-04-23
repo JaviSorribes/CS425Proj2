@@ -119,6 +119,7 @@
                     <th>Semester</th>
                     <th>Cost</th>
                     <th>Quantity</th>
+                    <th>Manage</th>
                 </tr>
             </thead>
             <tbody>
@@ -131,6 +132,7 @@
                   <th>{{ data['coursesemester'] }}</th>
                   <th>{{ data['cost'] }}</th>
                   <th>{{ data['quantity'] }}</th>
+                  <th><button type="submit" class="btn btn-default"><a href="/remove_book/{{ data['bookid'] }}">Remove</a></button></th>
                   <!--Student will be able to only borrow books that have been assigned-->
                 </tr>
                 {% endfor %}

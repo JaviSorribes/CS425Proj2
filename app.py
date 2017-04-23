@@ -265,6 +265,17 @@ def remove_user(id,access_level):
     conn.commit()
     return render_template('admin.html', user=user, today=date.today())
 
+@app.route("/remove_book/<bookid>")
+def remove_book(bookid):
+    query = "SELECT * FROM book WHERE bookid = {}".format(bookid)
+    cursor.execute(query)
+    answer = [tup2dict(tup,'book') for tup in cursor.fetchall()]
+    answer = answer[0]
+    query = "DELETE FROM book WHERE bookid = {}".format(bookid)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('admin.html',user=user, today=date.today())
+
 @app.route("/grant_request/<requestid>")
 def book_request_grant(requestid):
     query = "SELECT * FROM book_request WHERE requestid = {}".format(requestid)
