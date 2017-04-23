@@ -25,11 +25,12 @@ def book_parse(isbn):
             information["summary"] = "No Summary"
         else:
             information["summary"] = actual["data"][0]["summary"]
+        information["ban"] = "http://www.barnesandnoble.com/s/{}".format(information["isbn13"])
+        information["apple"] = "http://itunes.apple.com/us/book/{}".format(information["isbn13"])
     else:
         information["summary"] = "eror"
         information["price"] = "error"
-    information["ban"] = "http://www.barnesandnoble.com/s/{}".format(information["isbn13"])
-    information["apple"] = "http://itunes.apple.com/us/book/{}".format(information["isbn13"])
+
 
 def book_summary(isbn):
     return information["summary"]

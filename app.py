@@ -232,16 +232,22 @@ def request_book_teacher():
     course_year = request.args["courseyear"]
     course_sem = request.args["coursesem"]
     methodcalls.book_all(isbn)
-    cost = methodcalls.book_price(isbn)
-    if cost == "error":
-        print("error")
-    title = methodcalls.book_title(isbn)
 
-    query = "INSERT INTO book_request (isbn,cost,title,coursename,courseyear,coursesemester,requestedby,quantity) " \
-    "VALUES ({},{},\"{}\",\"{}\",\"{}\",\"{}\",'teacher',{});".format(isbn,cost,title,course_name,course_year,course_sem,quantity)
+    query = "SELECT * FROM course WHERE name = \"{}\" and year = {} and semester = \"{}\"".format(course_name,course_year,course_sem)
     cursor.execute(query)
-    conn.commit()
-    return render_template("teacher-requestdone.html")
+    result_dic = [tup2dict(tup, schemas["course"]) for tup in cursor.fetchall()]
+    if result_dic and methodcalls.book_summary(isbn) != "eror":
+        cost = methodcalls.book_price(isbn)
+        title = methodcalls.book_title(isbn)
+        query = "INSERT INTO book_request (isbn,cost,title,coursename,courseyear,coursesemester,requestedby,quantity) " \
+                "VALUES ({},{},\"{}\",\"{}\",\"{}\",\"{}\",'teacher',{});".format(isbn, cost, title, course_name,
+                                                                                  course_year, course_sem, quantity)
+        cursor.execute(query)
+        conn.commit()
+        return render_template("teacher-requestdone.html")
+    else:
+        return render_template("teacher-requesterror.html")
+
 
 @app.route("/book_info/<isbn>")
 def book_info(isbn):
