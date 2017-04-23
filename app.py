@@ -314,6 +314,17 @@ def return_book(studentid,bookid):
     user = tup2dict(cursor.fetchone(), 'student')
     return render_template('student.html', user=user, today=date.today())
 
+@app.route("/renew_book/<studentid>/<bookid>")
+def renew_book(studentid,bookid):
+    query = "SELECT * FROM book WHERE bookid={}".format(bookid)
+    cursor.execute(query)
+    answer = [tup2dict(tup, 'book') for tup in cursor.fetchall()]
+    answer = answer[0]
+    query = "UPDATE book SET duedate=DATE_ADD('{}', INTERVAL 30 DAY) WHERE bookid={}".format(date.today().isoformat(),bookid)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('student.html', user=user, today=date.today())
+
 @app.route("/") #asking the user for dates
 def index():
     global user
