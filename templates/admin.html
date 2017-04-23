@@ -119,7 +119,7 @@
 
         Add a Book:<form action="/add_book" class="form-inline">
           <div class="form-group">
-              <input type="text" class="form-control" name="ISBN" placeholder="ISBN #">
+              <input type="text" class="form-control" name="ISBN" placeholder="ISBN #" maxlength="10" pattern="\d{10}" title="Please enter 10 digits" required>
               <select class="form-control" name="Course">
                 {%  for data in courses() %}
                     <option>{{ data['name'] }}</option>
@@ -136,7 +136,7 @@
                   <option>Summer</option>
               </select>
               </input>
-              <input type="number" class="form-control" name="Quantity" placeholder="Quantity">
+              <input type="number" class="form-control" name="Quantity" placeholder="Quantity" required title="Enter a number">
               <button type="submit" class="btn btn-default">Add Book</button>
           </div>
         </form>
@@ -249,7 +249,7 @@
           {%  endfor %}
         </table>
     </div>
-            <div id="studentcheckout" class="tab-pane fade">
+    <div id="studentcheckout" class="tab-pane fade">
       <!--<h3 style="text-align:center">Useful Contacts</h3>-->
         <h3>Student Checkout Report</h3>
         <!--
