@@ -43,6 +43,7 @@
       <li><a data-toggle="tab" href="#users">Manage Users</a></li>
       <li><a data-toggle="tab" href="#courses">Manage Courses</a></li>
         <li><a data-toggle="tab" href="#studentcheckout">Checkout Report Student</a></li>
+        <li><a data-toggle="tab" href="#overduefees">Overdue Fees</a></li>
     </ul> 
     <ul class="nav navbar-nav navbar-right" style="padding-right:10px">
       <p class="navbar-text">Signed in as: Admin</p>
@@ -252,6 +253,42 @@
               <td>{{ book['title'] }}</td>
               <td>{{ book['datecheckedout'] }}</td>
               <td>{{ book['duedate'] }}</td>
+          </tbody>
+          {%  endfor %}
+        </table>
+    </div>
+
+        <div id="overduefees" class="tab-pane fade">
+      <!--<h3 style="text-align:center">Useful Contacts</h3>-->
+        <h3>Overdue Fees</h3>
+        <!--
+
+        <form class="form-inline">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Enter Course">
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+
+    !-->
+      <table class="table table-hover table-bordered table-default">
+          <thead>
+            <tr>
+                 <td>Student ID</td>
+                <td>Student Name</td>
+                <td>Amount Due</td>
+              <td>Parent Name</td>
+              <td>Contact</td>
+            </tr>
+          </thead>
+          {% for data in contacts() %}
+          <tbody>
+
+              <td>{{ data['studentid'] }}</td>
+              <td>{{ data['student_firstname'] }} {{data['student_lastname']}}</td>
+              <td>{{ data['amountdue'] }}</td>
+              <td>{{ data['parent_firstname'] }} {{ data['parent_lastname']}}</td>
+              <td>{{ data['parent_contact'] }}</td>
           </tbody>
           {%  endfor %}
         </table>
