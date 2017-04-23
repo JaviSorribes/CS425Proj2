@@ -113,6 +113,16 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;      
 }
+h1 {
+    color: #ffffff;
+    font-family: 'Raleway',sans-serif;
+    font-size: 54px;
+    font-weight: 800;
+    line-height: 62px;
+    margin: 48px 0 24px;
+    text-align: center;
+    text-transform: uppercase;
+}
     </style>
 
   <script>
@@ -131,11 +141,13 @@ body {
 
 <body translate="no" >
 
+  <h1>J.A.R.E. HIGH SCHOOL LIBRARY</h1>
+  
   <div class="login-page">
   <em><h3 style="text-align: center;color:red"> USER AUTHENTICATION ERROR </h3></em>
   <div class="form">
     <form method="post" action="/home" class="login-form">
-      <input class="forminput" type="text" name="username" placeholder="username" required>
+      <input class="forminput" type="text" name="username" placeholder="username" required autofocus>
       <input class="forminput" type="password" name="password" placeholder="password" required>
       <input class="formbutton" type="Submit">
     </form>

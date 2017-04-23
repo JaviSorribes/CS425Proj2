@@ -221,7 +221,7 @@
               <th>{{ data['isbn'] }}</th>
               <th>{{ data['coursename'] }}</th>
               <th>{{ data['duedate'] }}</th>
-              <th>{{ data['cost'] }}<button><a href="/borrow_book/{{ data['bookid'] }}">Return</a></button></th>
+              <th>{{ data['cost'] }}<button><a href="/return_book/{{ user['studentid'] }}/{{ data['bookid'] }}">Return</a></button></th>
             </tr>
             {% endif %}
             {% endfor %}
