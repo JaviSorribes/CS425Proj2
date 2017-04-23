@@ -292,13 +292,14 @@ def remove_user(id,access_level):
 def add_book():
     isbn = request.args["ISBN"]
     methodcalls.book_all(isbn)
+    if methodcalls.book_summary(isbn) == "eror":
+        return render_template('admin-book-add-error.html',user=user,today=date.today())
     title = methodcalls.book_title(isbn)
     cost = methodcalls.book_price(isbn)
     course = request.args["Course"]
     year = request.args["Year"]
     semester = request.args["Semester"].lower()
     quantity = request.args["Quantity"]
-    print(isbn,cost,title,course,year,semester,quantity)
     query = "INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid)" \
             " VALUES ({},{},NULL,NULL,\"{}\",\"{}\",\"{}\",\"{}\",NULL);".format(isbn,cost,title,course,year,semester)
     for i in range(int(quantity)):
