@@ -49,6 +49,13 @@ def sqlcommands():
             cursor.execute(query)
             book_schema = schemas['book']
             return [tup2dict(tup,'book') for tup in cursor.fetchall()]
+        def allbookscourses():
+            #query = "SELECT * FROM book WHERE datecheckedout IS NOT NULL ORDER BY coursename,courseyear,coursesemester"
+            query = "SELECT * FROM book NATURAL JOIN (SELECT studentid,firstname,lastname FROM student) s WHERE datecheckedout IS NOT NULL ORDER BY coursename,courseyear,coursesemester"
+            cursor.execute(query)
+            book_schema = ['studentid', 'bookid', 'isbn', 'cost', 'duedate', 'datecheckedout', 'title', 'coursename', 'courseyear', 'coursesemester', 'firstname','lastname']
+            #print(book_schema)
+            return [tup2dict(tup, book_schema) for tup in cursor.fetchall()]
         def allbooksstudent(studentid):
             query = "SELECT * FROM book WHERE book.studentid={}".format(studentid)
             cursor.execute(query)
