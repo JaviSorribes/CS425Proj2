@@ -102,14 +102,24 @@
   color: #EF3B3A;
 }
 body {
-  background: #33CCFF; /* fallback for old browsers */
-  background: -webkit-linear-gradient(right, #33CCFF, #78C7B9);
-  background: -moz-linear-gradient(right, #33CCFF, #78C7B9);
-  background: -o-linear-gradient(right, #33CCFF, #78C7B9);
-  background: linear-gradient(to left, #33CCFF, #78C7B9);
-  font-family: "Roboto", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;      
+    background: #33CCFF; /* fallback for old browsers */
+    background: -webkit-linear-gradient(right, #33CCFF, #78C7B9);
+    background: -moz-linear-gradient(right, #33CCFF, #78C7B9);
+    background: -o-linear-gradient(right, #33CCFF, #78C7B9);
+    background: linear-gradient(to left, #33CCFF, #78C7B9);
+    font-family: "Roboto", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+h1 {
+    color: #ffffff;
+    font-family: 'Raleway',sans-serif;
+    font-size: 54px;
+    font-weight: 800;
+    line-height: 62px;
+    margin: 48px 0 24px;
+    text-align: center;
+    text-transform: uppercase;
 }
     </style>
 
@@ -129,10 +139,12 @@ body {
 
 <body translate="no" >
 
+  <h1>J.A.R.E. HIGH SCHOOL LIBRARY</h1>
+
   <div class="login-page">
   <div class="form">
     <form method="post" action="/home" class="login-form">
-      <input class="forminput" type="text" name="username" placeholder="username" required>
+      <input class="forminput" type="text" name="username" placeholder="username" required autofocus>
       <input class="forminput" type="password" name="password" placeholder="password" required>
       <input class="formbutton" type="Submit">
     </form>
