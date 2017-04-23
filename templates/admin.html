@@ -95,7 +95,7 @@
           Total number of books = {{ data[0] }}.<br>
           Total number borrowed = {{ data[1] }}.<br>
           Total number available = {{ data[2] }}.<br>
-
+          <br>Search for a book:<br>
       </p>
       <form action="/books" class="form-inline">
           <div class="form-group">
@@ -109,6 +109,24 @@
                 <option value="{{ data['title'] }}">
             {% endfor %}
         </datalist>
+        <br>
+
+        Add a Book:<form action="/add_book" class="form-inline">
+          <div class="form-group">
+              <input type="text" class="form-control" placeholder="ISBN #">
+              <input type="text" class="form-control" placeholder="Cost">
+              <input type="text" class="form-control" placeholder="Title">
+              <input type="text" class="form-control" placeholder="Course">
+              <input type="text" class="form-control" placeholder="Year">
+              <select class="form-control" id="semester">
+                <option>Fall</option>
+                <option>Spring</option>
+                <option>Summer</option>
+              </select>
+              <input type="text" class="form-control" placeholder="Quantity">
+          </div>
+        <button type="submit" class="btn btn-default">Add Book</button>
+        </form>
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
