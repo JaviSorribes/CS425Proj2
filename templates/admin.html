@@ -66,10 +66,12 @@
             <thead>
                 <tr>
                     <th>Title</th>
+                    <th>Requested by</th>
                     <th>ISBN #</th>
                     <th>Course</th>
                     <th>Year </th>
-                    <th>Due Date</th>
+                    <th>Semester</th>
+                    <th>Quantity</th>
                     <th>Cost</th>
                     <th>Action</th>
                 </tr>
@@ -77,9 +79,11 @@
             {% for data in allrequests() %}
             <tr>
               <th>{{ data['title'] }}</th>
+              <th>{{ data['requestedby'].capitalize() }}</th>
               <th>{{ data['isbn'] }}</th>
               <th>{{ data['coursename'] }}</th>
               <th>{{ data['courseyear'] }}</th>
+              <th>{{ data['coursesemester'] }}</th>
               <th>{{ data['quantity'] }}</th>
               <th>{{ data['cost'] }}</th>
                 <th><button><a href="/grant_request/{{data['requestid']}}">Grant</button></th>

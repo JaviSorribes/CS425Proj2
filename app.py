@@ -286,6 +286,7 @@ def book_request_grant(requestid):
     query = "DELETE FROM book_request WHERE requestid = {}".format(requestid)
     cursor.execute(query)
     conn.commit()
+    print(answer)
     # First we have to insert the course into course.
     query = "INSERT INTO book (isbn,cost,title,coursename,courseyear,coursesemester) VALUES ({},{},\'{}\',\'{}\',{},\'{}\')".format(answer["isbn"],answer["cost"],answer["title"],answer["coursename"],answer["courseyear"],answer["coursesemester"])
     #print(query)
