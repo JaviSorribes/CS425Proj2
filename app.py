@@ -254,6 +254,10 @@ def borrow_book(studentid, bookid):
     query="UPDATE book SET studentid={}, datecheckedout='{}', duedate=DATE_ADD(datecheckedout, INTERVAL 30 DAY) WHERE bookid={}".format(studentid, date.today().isoformat(), bookid)
     cursor.execute(query)
     conn.commit()
+    updateamountdue()
+    query = "SELECT * FROM student WHERE studentid = {}".format(studentid)
+    cursor.execute(query)
+    user = tup2dict(cursor.fetchone(), 'student')
     return render_template('student.html', user=user, today=date.today())
 
 @app.route("/remove_user/<id>/<access_level>")
@@ -289,8 +293,8 @@ def book_request_grant(requestid):
     conn.commit()
     return render_template('admin.html', user=user)
 
-@app.route("/borrow_book/<bookid>")
-def return_book(bookid):
+@app.route("/return_book/<studentid>/<bookid>")
+def return_book(studentid,bookid):
     query = "SELECT * FROM book WHERE bookid={}".format(bookid)
     cursor.execute(query)
     answer = [tup2dict(tup, 'book') for tup in cursor.fetchall()]
@@ -298,6 +302,10 @@ def return_book(bookid):
     query="UPDATE book SET studentid=NULL, datecheckedout=NULL, duedate=NULL WHERE bookid={}".format(bookid)
     cursor.execute(query)
     conn.commit()
+    updateamountdue()
+    query = "SELECT * FROM student WHERE studentid = {}".format(studentid)
+    cursor.execute(query)
+    user = tup2dict(cursor.fetchone(), 'student')
     return render_template('student.html', user=user, today=date.today())
 
 @app.route("/") #asking the user for dates
@@ -322,8 +330,6 @@ def updateamountdue():
         query = "UPDATE student SET amountdue = {} WHERE studentid={}".format(studs[studid],studid)
         cursor.execute(query)
         conn.commit()
-    query = "SELECT studentid,amountdue FROM student"
-    cursor.execute(query)
 
 if __name__ == '__main__':
     app.run()
