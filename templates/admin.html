@@ -131,7 +131,7 @@
                 {% for data in groupBooks() %}
                 <tr>
                   <th>{{ data['isbn'] }}</th>
-                  <th>{{ data['title'] }}</th>
+                  <th><a href="/book_info/{{data['isbn']}}">{{ data['title'] }}</th>
                   <th>{{ data['coursename'] }}</th>
                   <th>{{ data['courseyear'] }}</th>
                   <th>{{ data['coursesemester'] }}</th>
