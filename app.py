@@ -96,6 +96,12 @@ def sqlcommands():
             #temp = [s for s in cursor.fetchall()]
             return [tup2dict(tup,'book') for tup in cursor.fetchall()]
 
+        def contacts():
+            query = "SELECT studentid, student_firstname, student_lastname, amountdue, parent_firstname, parent_lastname, contact AS parent_contact FROM parent_contact pc JOIN (SELECT p.parentid, s.studentid, s.firstname AS student_firstname, s.lastname AS student_lastname, s.amountdue, p.firstname AS parent_firstname, p.lastname AS parent_lastname FROM student s JOIN (SELECT * FROM has NATURAL JOIN parent) p ON(s.studentid=p.studentid) WHERE s.amountdue>0) sp ON(pc.parentid=sp.parentid) ORDER BY studentid;"
+            cursor.execute(query)
+            contact_schema = ['studentid', 'student_firstname', 'student_lastname', 'amountdue', 'parent_firstname', 'parent_lastname', 'parent_contact']
+            return [tup2dict(tup,contact_schema) for tup in cursor.fetchall()]
+
         def courses():
             query = "SELECT DISTINCT(name) from COURSE"
             cursor.execute(query)
@@ -292,6 +298,7 @@ def book_request_grant(requestid):
     query = "DELETE FROM book_request WHERE requestid = {}".format(requestid)
     cursor.execute(query)
     conn.commit()
+    print(answer)
     # First we have to insert the course into course.
     query = "INSERT INTO book (isbn,cost,title,coursename,courseyear,coursesemester) VALUES ({},{},\'{}\',\'{}\',{},\'{}\')".format(answer["isbn"],answer["cost"],answer["title"],answer["coursename"],answer["courseyear"],answer["coursesemester"])
     #print(query)
