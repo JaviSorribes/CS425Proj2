@@ -153,7 +153,7 @@
               <th>{{ data['datecheckedout'] }}</th>
               <th>{{ data['duedate'] }}</th>
               <th>{{ data['cost'] }}</th>
-			  <th><button><a href="/borrow_book/{{ data['bookid'] }}">Return</a></button></th>
+			  <th><button><a href="/return_book/{{user['studentid']}}/{{ data['bookid'] }}">Return</a></button><button><a href="/renew_book/{{user['studentid']}}/{{data['bookid']}}">Renew</a></button></th>
             </tr>
             {% endif %}
             {% endfor %}

@@ -96,6 +96,12 @@ def sqlcommands():
             #temp = [s for s in cursor.fetchall()]
             return [tup2dict(tup,'book') for tup in cursor.fetchall()]
 
+        def contacts():
+            query = "SELECT studentid, student_firstname, student_lastname, amountdue, parent_firstname, parent_lastname, contact AS parent_contact FROM parent_contact pc JOIN (SELECT p.parentid, s.studentid, s.firstname AS student_firstname, s.lastname AS student_lastname, s.amountdue, p.firstname AS parent_firstname, p.lastname AS parent_lastname FROM student s JOIN (SELECT * FROM has NATURAL JOIN parent) p ON(s.studentid=p.studentid) WHERE s.amountdue>0) sp ON(pc.parentid=sp.parentid) ORDER BY studentid;"
+            cursor.execute(query)
+            contact_schema = ['studentid', 'student_firstname', 'student_lastname', 'amountdue', 'parent_firstname', 'parent_lastname', 'parent_contact']
+            return [tup2dict(tup,contact_schema) for tup in cursor.fetchall()]
+
         def courses():
             query = "SELECT DISTINCT(name) from COURSE"
             cursor.execute(query)
@@ -226,16 +232,22 @@ def request_book_teacher():
     course_year = request.args["courseyear"]
     course_sem = request.args["coursesem"]
     methodcalls.book_all(isbn)
-    cost = methodcalls.book_price(isbn)
-    if cost == "error":
-        print("error")
-    title = methodcalls.book_title(isbn)
 
-    query = "INSERT INTO book_request (isbn,cost,title,coursename,courseyear,coursesemester,requestedby,quantity) " \
-    "VALUES ({},{},\"{}\",\"{}\",\"{}\",\"{}\",'teacher',{});".format(isbn,cost,title,course_name,course_year,course_sem,quantity)
+    query = "SELECT * FROM course WHERE name = \"{}\" and year = {} and semester = \"{}\"".format(course_name,course_year,course_sem)
     cursor.execute(query)
-    conn.commit()
-    return render_template("teacher-requestdone.html")
+    result_dic = [tup2dict(tup, schemas["course"]) for tup in cursor.fetchall()]
+    if result_dic and methodcalls.book_summary(isbn) != "eror":
+        cost = methodcalls.book_price(isbn)
+        title = methodcalls.book_title(isbn)
+        query = "INSERT INTO book_request (isbn,cost,title,coursename,courseyear,coursesemester,requestedby,quantity) " \
+                "VALUES ({},{},\"{}\",\"{}\",\"{}\",\"{}\",'teacher',{});".format(isbn, cost, title, course_name,
+                                                                                  course_year, course_sem, quantity)
+        cursor.execute(query)
+        conn.commit()
+        return render_template("teacher-requestdone.html")
+    else:
+        return render_template("teacher-requesterror.html")
+
 
 @app.route("/book_info/<isbn>")
 def book_info(isbn):
@@ -315,6 +327,7 @@ def book_request_grant(requestid):
     query = "DELETE FROM book_request WHERE requestid = {}".format(requestid)
     cursor.execute(query)
     conn.commit()
+    print(answer)
     # First we have to insert the course into course.
     query = "INSERT INTO book (isbn,cost,title,coursename,courseyear,coursesemester) VALUES ({},{},\'{}\',\'{}\',{},\'{}\')".format(answer["isbn"],answer["cost"],answer["title"],answer["coursename"],answer["courseyear"],answer["coursesemester"])
     #print(query)
@@ -335,6 +348,17 @@ def return_book(studentid,bookid):
     query = "SELECT * FROM student WHERE studentid = {}".format(studentid)
     cursor.execute(query)
     user = tup2dict(cursor.fetchone(), 'student')
+    return render_template('student.html', user=user, today=date.today())
+
+@app.route("/renew_book/<studentid>/<bookid>")
+def renew_book(studentid,bookid):
+    query = "SELECT * FROM book WHERE bookid={}".format(bookid)
+    cursor.execute(query)
+    answer = [tup2dict(tup, 'book') for tup in cursor.fetchall()]
+    answer = answer[0]
+    query = "UPDATE book SET duedate=DATE_ADD('{}', INTERVAL 30 DAY) WHERE bookid={}".format(date.today().isoformat(),bookid)
+    cursor.execute(query)
+    conn.commit()
     return render_template('student.html', user=user, today=date.today())
 
 @app.route("/") #asking the user for dates
