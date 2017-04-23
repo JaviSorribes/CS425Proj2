@@ -121,14 +121,16 @@ CREATE TABLE takes
   FOREIGN KEY (name, year, semester) REFERENCES course(name, year, semester)
 );
 
+/* Not being used because all admins control all books
 CREATE TABLE controls
 (
   adminid INT NOT NULL,
   bookid INT NOT NULL,
   /*name VARCHAR(20) NOT NULL,
   year INT NOT NULL,
-  semester CHAR NOT NULL,*/
-  PRIMARY KEY (adminid, bookid),/*, name, year, semester),*/
+  semester CHAR NOT NULL,
+  PRIMARY KEY (adminid, bookid),/*, name, year, semester),
   FOREIGN KEY (adminid) REFERENCES admin(adminid),
   FOREIGN KEY (bookid) REFERENCES book(bookid)
 );
+*/

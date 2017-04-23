@@ -4,7 +4,7 @@
 */
 USE library;
 DROP TABLE IF EXISTS  book_request;
-DROP TABLE IF EXISTS  controls;
+/*DROP TABLE IF EXISTS  controls;*/
 DROP TABLE IF EXISTS  takes;
 DROP TABLE IF EXISTS  has;
 DROP TABLE IF EXISTS  book;
