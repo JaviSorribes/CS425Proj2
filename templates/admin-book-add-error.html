@@ -6,12 +6,12 @@
   <meta name="viewport" content="width-device-width, initial-scale=1">
   <link rel="stylesheet" href="https://adityaparakh.000webhostapp.com/bootstrap.min.css" >
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  
+
 <style>
 .jumbotron{
   background-color:#29AB8D;
   color:white;
-}  
+}
 .jumbotron p{
   color:black;
   font-size: 40px;
@@ -38,22 +38,22 @@
   <div class="container bg-info">
     <ul class="nav navbar-nav">
       <p class="navbar-text">High School Library</p>
-      <li class="active"><a data-toggle="tab" href="#overview">Overview</a></li>
-      <li><a data-toggle="tab" href="#books">Books</a></li>
+      <li><a data-toggle="tab" href="#overview">Overview</a></li>
+      <li class="active"><a data-toggle="tab" href="#books">Books</a></li>
       <li><a data-toggle="tab" href="#users">Manage Users</a></li>
       <li><a data-toggle="tab" href="#courses">Manage Courses</a></li>
-    </ul> 
+    </ul>
     <ul class="nav navbar-nav navbar-right" style="padding-right:10px">
       <p class="navbar-text">Signed in as: Admin</p>
       <li><button class="btn navbar-btn"><a href="/">Logout</a></button></li>
     </ul>
   </div>
-  
+
 </nav>
 <div class="container bg-muted" style="padding:0px; background-color:white">
     <div class="tab-content" style="    margin-top:30px">
-    
-<!--THE OVERVIEW FOR THE USER IS SHOWN HERE-->    
+
+<!--THE OVERVIEW FOR THE USER IS SHOWN HERE-->
     <div id="overview" class="tab-pane fade in active">
       <h3>Overview</h3>
       {% block user %}
@@ -95,6 +95,8 @@
           Total number of books = {{ data[0] }}.<br>
           Total number borrowed = {{ data[1] }}.<br>
           Total number available = {{ data[2] }}.<br>
+          <br><br>
+          <em>You have entered an invalid ISBN #</em>
           <br>Search for a book:<br>
       </p>
       <form action="/books" class="form-inline">
@@ -164,7 +166,7 @@
             </tbody>
         </table>
     </div>
-    
+
 <!--THE STUDENT FEES TAB IS HANDLED HERE-->
     <div id="users" class="tab-pane fade">
       <h3>Manage Users</h3>
@@ -184,7 +186,7 @@
               <th>Last Name</th>
               <th>Role / Access Level</th>
               <th>Manage</th>
-            </tr>  
+            </tr>
           </thead>
           <tbody>
             {% for data in allusers() %}
@@ -208,7 +210,7 @@
 
         <form class="form-inline">
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="Enter Course"> 
+            <input type="text" class="form-control" placeholder="Enter Course">
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
         </form>

@@ -276,6 +276,24 @@ def remove_user(id,access_level):
     conn.commit()
     return render_template('admin.html', user=user, today=date.today())
 
+@app.route("/add_book")
+def add_book():
+    isbn = request.args["ISBN"]
+    methodcalls.book_all(isbn)
+    title = methodcalls.book_title(isbn)
+    cost = methodcalls.book_price(isbn)
+    course = request.args["Course"]
+    year = request.args["Year"]
+    semester = request.args["Semester"].lower()
+    quantity = request.args["Quantity"]
+    print(isbn,cost,title,course,year,semester,quantity)
+    query = "INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid)" \
+            " VALUES ({},{},NULL,NULL,\"{}\",\"{}\",\"{}\",\"{}\",NULL);".format(isbn,cost,title,course,year,semester)
+    for i in range(int(quantity)):
+        cursor.execute(query)
+        conn.commit()
+    return render_template('admin.html',user=user, today=date.today())
+
 @app.route("/remove_book/<bookid>")
 def remove_book(bookid):
     query = "SELECT * FROM book WHERE bookid = {}".format(bookid)
