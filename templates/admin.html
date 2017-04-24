@@ -308,14 +308,32 @@
               <td>Contact</td>
             </tr>
           </thead>
+          {% set currstudentid = -1 %}
+          {% set currparentid = -1 %}
           {% for data in contacts() %}
           <tbody>
-
+            {% if currstudentid != data['studentid'] %}
               <td>{{ data['studentid'] }}</td>
               <td>{{ data['student_firstname'] }} {{data['student_lastname']}}</td>
               <td>{{ data['amountdue'] }}</td>
               <td>{{ data['parent_firstname'] }} {{ data['parent_lastname']}}</td>
               <td>{{ data['parent_contact'] }}</td>
+                {% set currstudentid = data['studentid'] %}
+                {% set currparentid = data['parentid'] %}
+            {% elif currparentid != data['parentid'] %}
+              <td>"</td>
+              <td>"</td>
+              <td>"</td>
+              <td>{{ data['parent_firstname'] }} {{ data['parent_lastname']}}</td>
+              <td>{{ data['parent_contact'] }}</td>
+                {% set currparentid = data['parentid'] %}
+            {% else %}
+              <td>"</td>
+              <td>"</td>
+              <td>"</td>
+              <td>"</td>
+              <td>{{ data['parent_contact'] }}</td>
+            {% endif %}
           </tbody>
           {%  endfor %}
         </table>
