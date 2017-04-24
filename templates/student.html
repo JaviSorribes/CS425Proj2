@@ -306,11 +306,11 @@
     <div id="userInfo" class="tab-pane fade">
       <h3>Keep your contact information updated to avoid missing important dates!</h3>
         <p>
-          {% set currname = -1 %}
+          {% set currparentid = -1 %}
           {% for data in parentcontacts(user['studentid']) %}
-          {% if currname != data['parentid'] %}
+          {% if currparentid != data['parentid'] %}
           <br>{{ data['firstname'] }} {{ data['lastname'] }}<br>
-          {% set currname = data['parentid'] %}
+          {% set currparentid = data['parentid'] %}
           {% endif %}
           {{ data['contact'] }}<br>
           {% endfor %}
