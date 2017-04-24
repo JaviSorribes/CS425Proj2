@@ -125,9 +125,9 @@ def sqlcommands():
             return cursor.fetchone()[0]
 
         def parentcontacts(studentid):
-            query = "SELECT parent.lastname, parent.firstname, parent_contact.contact FROM has LEFT JOIN parent ON has.parentid=parent.parentid LEFT JOIN parent_contact ON parent.parentid=parent_contact.parentid WHERE studentid={}".format(studentid)
+            query = "SELECT parent.parentid, parent.lastname, parent.firstname, parent_contact.contact FROM has LEFT JOIN parent ON has.parentid=parent.parentid LEFT JOIN parent_contact ON parent.parentid=parent_contact.parentid WHERE studentid={}".format(studentid)
             cursor.execute(query)
-            parentdisplay_schema = ['lastname', 'firstname', 'contact']
+            parentdisplay_schema = ['parentid', 'lastname', 'firstname', 'contact']
             return [tup2dict(tup, parentdisplay_schema) for tup in cursor.fetchall()]
         def semester():
             query = "SELECT DISTINCT(semester) from COURSE"

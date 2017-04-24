@@ -306,12 +306,11 @@
     <div id="userInfo" class="tab-pane fade">
       <h3>Keep your contact information updated to avoid missing important dates!</h3>
         <p>
-          {% set printname = {'foo':True} %}
+          {% set currname = -1 %}
           {% for data in parentcontacts(user['studentid']) %}
-          {% if printname.foo %}
-          {{ data['firstname'] }} {{ data['lastname'] }}<br>
-          {% if printname.update({'foo':False}) %}
-          {% endif %}
+          {% if currname != data['parentid'] %}
+          <br>{{ data['firstname'] }} {{ data['lastname'] }}<br>
+          {% set currname = data['parentid'] %}
           {% endif %}
           {{ data['contact'] }}<br>
           {% endfor %}
