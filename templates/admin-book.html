@@ -34,51 +34,110 @@
 </head>
 <body>
 
-
-   
 <nav class="navbar navbar-fixed-top">
   <div class="container bg-info">
     <ul class="nav navbar-nav">
-      <p class="navbar-text">High School Library</p>
+      <p class="navbar-text">RAJE High School Library</p>
       <li><a data-toggle="tab" href="#overview">Overview</a></li>
-      <li class="active"><a data-toggle="tab" href="#books" id="book" >Books</a></li>
+      <li class="active"><a data-toggle="tab" href="#books">Books</a></li>
       <li><a data-toggle="tab" href="#users">Manage Users</a></li>
       <li><a data-toggle="tab" href="#courses">Manage Courses</a></li>
-    </ul> 
+        <li><a data-toggle="tab" href="#studentcheckout">Checkout Report Student</a></li>
+        <li><a data-toggle="tab" href="#overduefees">Overdue Fees</a></li>
+    </ul>
     <ul class="nav navbar-nav navbar-right" style="padding-right:10px">
       <p class="navbar-text">Signed in as: Admin</p>
       <li><button class="btn navbar-btn"><a href="/">Logout</a></button></li>
     </ul>
   </div>
-  
+
 </nav>
 <div class="container bg-muted" style="padding:0px; background-color:white">
-    <div class="tab-content" style="margin-top:30px">
-    
-<!--THE OVERVIEW FOR THE USER IS SHOWN HERE-->    
+    <div class="tab-content" style="    margin-top:30px">
+
+<!--THE OVERVIEW FOR THE USER IS SHOWN HERE-->
     <div id="overview" class="tab-pane fade">
       <h3>Overview</h3>
       {% block user %}
         <p>A brief summary of your account, {{ user["firstname"] }}
         </p>
       {% endblock %}
+        <h3>Books requested</h3>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Requested by</th>
+                    <th>ISBN #</th>
+                    <th>Course</th>
+                    <th>Year </th>
+                    <th>Semester</th>
+                    <th>Quantity</th>
+                    <th>Cost</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            {% for data in allrequests() %}
+            <tr>
+              <th>{{ data['title'] }}</th>
+              <th>{{ data['requestedby'].capitalize() }}</th>
+              <th>{{ data['isbn'] }}</th>
+              <th>{{ data['coursename'] }}</th>
+              <th>{{ data['courseyear'] }}</th>
+              <th>{{ data['coursesemester'] }}</th>
+              <th>{{ data['quantity'] }}</th>
+              <th>{{ data['cost'] }}</th>
+                <th><button><a href="/grant_request/{{data['requestid']}}">Grant</button></th>
+            </tr>
+            {% endfor %}
+        </table>
     </div>
 
 <!--THE USERS BOOKS ARE HANDLED HERE-->
-    <div id="books" class="tab-pane fade  in active">
+    <div id="books" class="tab-pane fade in active">
       <h3>Book Database</h3>
-      <form action="/books" class="form-inline">
-          <div class="form-group">
-            <input list="book_list" type="text" name="bookname" class="form-control" placeholder="Book Name">
-          </div>
-          <button type="submit" class="btn btn-default">Submit</button>
+        <p>
+          {% set data = availableBooks() %}
+          Total number of books = {{ data[0] }}.<br>
+          Total number borrowed = {{ data[1] }}.<br>
+          Total number available = {{ data[2] }}.<br>
+          <br>Search for a book:<br>
+        </p>
+        <form action="/books" class="form-inline">
+            <div class="form-group">
+                <select class="form-control" name="bookname">
+                   <option>all books</option>>
+                    {%  for data in bookTitles() %}
+                        <option>{{ data['title'] }}</option>>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </div>
         </form>
-        <datalist id = "book_list">
-            <option value="all books">
-            {%  for data in bookTitles() %}
-                <option value="{{ data['title'] }}">
-            {% endfor %}
-        </datalist>
+        <br><p>Add a Book:</p>
+        <form action="/add_book" class="form-inline">
+          <div class="form-group">
+              <input type="text" class="form-control" name="ISBN" placeholder="ISBN #" maxlength="10" pattern="\d{10}" title="Please enter 10 digits" required>
+              <select class="form-control" name="Course">
+                {%  for data in courses() %}
+                    <option>{{ data['name'] }}</option>
+                {% endfor %}
+              </select>
+              <select class="form-control" name="Year">
+                {%  for data in year() %}
+                    <option>{{ data['year'] }}</option>
+                {% endfor %}
+              </select>
+              <select class="form-control" name="Semester">
+                  <option>Fall</option>
+                  <option>Spring</option>
+                  <option>Summer</option>
+              </select>
+              </input>
+              <input type="number" class="form-control" name="Quantity" placeholder="Quantity" required title="Enter a number">
+              <button type="submit" class="btn btn-default">Add Book</button>
+          </div>
+        </form>
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
@@ -99,13 +158,12 @@
               <th>{{book["courseyear"]}}</th>
               <th>{{book["cost"]}}</th>
               <th><button type="submit" class="btn btn-default"><a href="/remove_book/{{ book['bookid'] }}">Remove</a></button></th>
-              <th></th>
             </tr>
           {% endfor %}
           </tbody>
         </table>
     </div>
-    
+
 <!--THE STUDENT FEES TAB IS HANDLED HERE-->
     <div id="users" class="tab-pane fade">
       <h3>Manage Users</h3>
@@ -134,6 +192,7 @@
                   <th>{{ data['firstname'] }}</th>
                   <th>{{ data['lastname'] }}</th>
                   <th>{{ data['access_level'] }}</th>
+                  <th><button type="submit" class="btn btn-default"><a href="/remove_user/{{ data['id'] }} / {{ data['access_level'] }}">Remove User</a></button></th>
                 </tr>
             {%  endfor %}
           </tbody>
@@ -143,34 +202,133 @@
 <!--THE RELEVANT CONTACT INFORMATION IS HANDLED HERE-->
     <div id="courses" class="tab-pane fade">
       <!--<h3 style="text-align:center">Useful Contacts</h3>-->
-      <h3>Manage Courses</h3>
+        <h3>Manage Courses</h3>
+        <!--
+
         <form class="form-inline">
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="Enter Course"> 
+            <input type="text" class="form-control" placeholder="Enter Course">
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
+
+    !-->
       <table class="table table-hover table-bordered table-default">
           <thead>
             <tr>
               <td>Course</td>
+                <td>Book Name</td>
               <td>Student ID</td>
-              <td>Book Name</td>
+
+                <td>Student Name</td>
               <td>Check-Out Date</td>
               <td>Due Date</td>
               <td>Overdue?</td>
               <td>Email</td>
             </tr>
           </thead>
+          {% for book in allbookscourses() %}
           <tbody>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
+              <td>{{ book['coursename'] }} </td>
+              <td>{{ book['title'] }}</td>
+              <td>{{ book['studentid'] }}</td>
+
+              <td>{{ book['firstname'] }} {{book['lastname']}}</td>
+              <td>{{ book['datecheckedout'] }}</td>
+              <td>{{ book['duedate'] }}</td>
               <td></td>
               <td><button type="email" class="btn btn-default">Contact</button></td>
           </tbody>
+          {%  endfor %}
+        </table>
+    </div>
+    <div id="studentcheckout" class="tab-pane fade">
+      <!--<h3 style="text-align:center">Useful Contacts</h3>-->
+        <h3>Student Checkout Report</h3>
+        <!--
+
+        <form class="form-inline">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Enter Course">
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+
+    !-->
+      <table class="table table-hover table-bordered table-default">
+          <thead>
+            <tr>
+                 <td>Student ID</td>
+                <td>Student Name</td>
+                <td>Title</td>
+              <td>Check-Out Date</td>
+              <td>Due Date</td>
+            </tr>
+          </thead>
+          {% for book in allbookscourses() %}
+          <tbody>
+
+              <td>{{ book['studentid'] }}</td>
+              <td>{{ book['firstname'] }} {{book['lastname']}}</td>
+              <td>{{ book['title'] }}</td>
+              <td>{{ book['datecheckedout'] }}</td>
+              <td>{{ book['duedate'] }}</td>
+          </tbody>
+          {%  endfor %}
+        </table>
+    </div>
+
+        <div id="overduefees" class="tab-pane fade">
+      <!--<h3 style="text-align:center">Useful Contacts</h3>-->
+        <h3>Overdue Fees</h3>
+        <!--
+
+        <form class="form-inline">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Enter Course">
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+
+    !-->
+      <table class="table table-hover table-bordered table-default">
+          <thead>
+            <tr>
+                 <td>Student ID</td>
+                <td>Student Name</td>
+                <td>Amount Due</td>
+              <td>Parent Name</td>
+              <td>Contact</td>
+            </tr>
+          </thead>
+          {% set currstudentid = -1 %}
+          {% set currparentid = -1 %}
+          {% for data in contacts() %}
+          <tbody>
+            {% if currstudentid != data['studentid'] %}
+              <td>{{ data['studentid'] }}</td>
+              <td>{{ data['student_firstname'] }} {{data['student_lastname']}}</td>
+              <td>{{ data['amountdue'] }}</td>
+              <td>{{ data['parent_firstname'] }} {{ data['parent_lastname']}}</td>
+              <td>{{ data['parent_contact'] }}</td>
+                {% set currstudentid = data['studentid'] %}
+                {% set currparentid = data['parentid'] %}
+            {% elif currparentid != data['parentid'] %}
+              <td>"</td>
+              <td>"</td>
+              <td>"</td>
+              <td>{{ data['parent_firstname'] }} {{ data['parent_lastname']}}</td>
+              <td>{{ data['parent_contact'] }}</td>
+                {% set currparentid = data['parentid'] %}
+            {% else %}
+              <td>"</td>
+              <td>"</td>
+              <td>"</td>
+              <td>"</td>
+              <td>{{ data['parent_contact'] }}</td>
+            {% endif %}
+          </tbody>
+          {%  endfor %}
         </table>
     </div>
   </div>

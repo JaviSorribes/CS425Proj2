@@ -181,7 +181,7 @@ def login():
 @app.route("/books")
 def books():
     if request.args['bookname'].lower() == "all books":
-        query = "SELECT * FROM book"
+        query = "SELECT * FROM book ORDER BY title"
         cursor.execute(query)
         books = [tup2dict(tup,'book') for tup in cursor.fetchall()]
         return render_template('admin-book.html', books = books, user = user)
