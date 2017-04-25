@@ -44,6 +44,11 @@ def tup2dict(tup,schema): #assumes right arguments
 def sqlcommands():
     class allmethods:
         #define as many commands as needed here (in alphabetical order)
+        def alladmins():
+            query = "SELECT * FROM admin"
+            cursor.execute(query)
+            return [tup2dict(tup,'admin') for tup in cursor.fetchall()]
+
         def allbooks():
             query = "SELECT * FROM book"
             cursor.execute(query)
@@ -77,6 +82,10 @@ def sqlcommands():
             query = "SELECT * FROM student"
             cursor.execute(query)
             return [tup2dict(tup,'student') for tup in cursor.fetchall()]
+        def allteachers():
+            query = "SELECT * FROM teacher"
+            cursor.execute(query)
+            return [tup2dict(tup,'teacher') for tup in cursor.fetchall()]
         def allrequests():
             query = "SELECT * FROM book_request"
             cursor.execute(query)
@@ -118,6 +127,16 @@ def sqlcommands():
             cursor.execute(query)
             book_Group = ['isbn', 'title', 'coursename', 'courseyear', 'coursesemester', 'quantity', 'cost']
             return [tup2dict(tup, book_Group) for tup in cursor.fetchall()]
+
+        def num_advising(teacherid):
+            query = "SELECT T.teacherid, T.lastname, T.firstname, S.numstudents FROM library.teacher as T, (SELECT advisorid as teacherid, COUNT(*) as numstudents FROM library.student GROUP BY advisorid) as S WHERE T.teacherid = S.teacherid AND S.teacherid = \"{}\"".format(teacherid)
+            cursor.execute(query)
+            return cursor.fetchone()
+        #Return number of courses a teacher teaches
+        def num_teaching(teacherid):
+            query = "SELECT teacherid, COUNT(*) as numcourses FROM library.course WHERE teacherid = \"{}\"".format(teacherid)
+            cursor.execute(query)
+            return cursor.fetchone()
 
         def numbooksoverdue(studentid):
             query = "SELECT COUNT(*) FROM book WHERE studentid={}".format(studentid)
@@ -224,6 +243,67 @@ def request_book_student():
         print("error")
         return render_template("student-requesterror.html", user=user, today=date.today())
 
+@app.route("/add_admin/")
+def add_admin():
+    fname = request.args['a_firstname']
+    lname = request.args['a_lastname']
+    query = "INSERT INTO admin (firstname,lastname) VALUES (\"{}\",\"{}\")".format(fname,lname)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('admin.html',user=user,today=date.today())
+
+@app.route("/add_student/")
+def add_student():
+    fname = request.args['s_firstname']
+    lname = request.args['s_lastname']
+    advisorid = request.args['s_advisorid']
+    query = "INSERT INTO student (firstname,lastname,advisorid) VALUES (\"{}\",\"{}\",\"{}\")".format(fname,lname,advisorid)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('admin.html',user=user,today=date.today())
+
+@app.route("/add_teacher/")
+def add_teacher():
+    fname = request.args['t_firstname']
+    lname = request.args['t_lastname']
+    query = "INSERT INTO teacher (firstname,lastname) VALUES (\"{}\",\"{}\")".format(fname,lname)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('admin.html',user=user, today=date.today())
+
+@app.route("/del_admin/<adminid>")
+def del_admin(adminid):
+    query = "SELECT * FROM admin WHERE adminid = \"{}\"".format(adminid)
+    cursor.execute(query)
+    answer = [tup2dict(tup,'admin') for tup in cursor.fetchall()]
+    answer = answer[0]
+    query = "DELETE FROM admin WHERE adminid = \"{}\"".format(adminid)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('admin.html',user=user,today=date.today())
+
+@app.route("/del_student/<studentid>")
+def del_student(studentid):
+    query = "SELECT * FROM student WHERE studentid = \"{}\"".format(studentid)
+    cursor.execute(query)
+    answer = [tup2dict(tup,'student') for tup in cursor.fetchall()]
+    answer = answer[0]
+    query = "DELETE FROM student WHERE studentid = \"{}\"".format(studentid)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('admin.html',user = user, today = date.today())
+
+@app.route("/del_teacher/<teacherid>")
+def del_teacher(teacherid):
+    query = "SELECT * FROM teacher WHERE teacherid = \"{}\"".format(teacherid)
+    cursor.execute(query)
+    answer = [tup2dict(tup,'teacher') for tup in cursor.fetchall()]
+    answer = answer[0]
+    query = "DELETE FROM teacher WHERE teacherid = \"{}\"".format(teacherid)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('admin.html',user=user,today=date.today())
+
 @app.route("/request_book_teacher")
 def request_book_teacher():
     isbn = request.args["bookisbn"]
@@ -257,6 +337,7 @@ def book_info(isbn):
     print(information)
     return render_template('admin-bookinfo.html', user=user, information=information)
 
+
 @app.route("/borrow_book/<studentid>/<bookid>")
 def borrow_book(studentid, bookid):
     query = "SELECT * FROM book WHERE bookid={}".format(bookid)
@@ -271,6 +352,20 @@ def borrow_book(studentid, bookid):
     cursor.execute(query)
     user = tup2dict(cursor.fetchone(), 'student')
     return render_template('student.html', user=user, today=date.today())
+
+@app.route("/change_advisor/<studentid>")
+def change_advisor(studentid):
+    s = "new_advisorid"+str(studentid)
+    advisorid = request.args[s]
+    query = "SELECT * FROM student WHERE studentid = {}".format(studentid)
+    cursor.execute(query)
+    answer = [tup2dict(tup,'student') for tup in cursor.fetchall()]
+    answer = answer[0]
+    query = "UPDATE student SET advisorid = \"{}\" WHERE studentid = \"{}\"".format(advisorid, studentid)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('admin.html', user=user, today=date.today())
+
 
 @app.route("/remove_user/<id>/<access_level>")
 def remove_user(id,access_level):

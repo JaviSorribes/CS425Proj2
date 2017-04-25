@@ -37,11 +37,11 @@
 <nav class="navbar navbar-fixed-top">
   <div class="container bg-info">
     <ul class="nav navbar-nav">
-      <p class="navbar-text">RAJE High School Library</p>
-      <li class="active"><a data-toggle="tab" href="#overview">Overview</a></li>
-      <li><a data-toggle="tab" href="#books">Books</a></li>
-      <li><a data-toggle="tab" href="#users">Manage Users</a></li>
-      <li><a data-toggle="tab" href="#courses">Manage Courses</a></li>
+        <p class="navbar-text">RAJE High School Library</p>
+        <li class="active"><a data-toggle="tab" href="#overview">Overview</a></li>
+        <li><a data-toggle="tab" href="#books">Books</a></li>
+        <li><a data-toggle="tab" href="#users">Manage Users</a></li>
+        <li><a data-toggle="tab" href="#courses">Manage Courses</a></li>
         <li><a data-toggle="tab" href="#studentcheckout">Checkout Report Student</a></li>
         <li><a data-toggle="tab" href="#overduefees">Overdue Fees</a></li>
     </ul> 
@@ -171,65 +171,174 @@
     
 <!--THE STUDENT FEES TAB IS HANDLED HERE-->
     <div id="users" class="tab-pane fade">
-      <h3>Manage Users</h3>
-        <p>Manage the users for the system.
-        </p>
-          <form class="form-inline">
-          <div class="form-group">
-            <input type="text" class="form-control" placeholder="Enter User ID #">
-          </div>
-          <button type="submit" class="btn btn-default">Submit</button>
-        </form>
-        <table class="table table-bordered table-hover">
-          <thead>
-            <tr>
-              <th>User ID</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Role / Access Level</th>
-              <th>Manage</th>
-            </tr>  
-          </thead>
-          <tbody>
-            {% for data in allusers() %}
-                <tr>
-                  <th>{{ data['id'] }}</th>
-                  <th>{{ data['firstname'] }}</th>
-                  <th>{{ data['lastname'] }}</th>
-                  <th>{{ data['access_level'] }}</th>
-                  <th><button type="submit" class="btn btn-default"><a href="/remove_user/{{ data['id'] }} / {{ data['access_level'] }}">Remove User</a></button></th>
-                </tr>
-            {%  endfor %}
-          </tbody>
-        </table>
+        <h3>Manage Users</h3>
+        <p>Click on the button to enlarge the table. Unclick to minimize the table</p>
+            <a href="#user_all" data-parent="#users" class="btn btn-info active" data-toggle="collapse">All Users</a>
+            <a href="#user_student" data-parent="#users" class="btn btn-info active" data-toggle="collapse">Students</a>
+            <a href="#user_teacher" data-parent="#users" class="btn btn-info active" data-toggle="collapse">Teachers</a>
+            <a href="#user_admin" data-parent="#users" class="btn btn-info active" data-toggle="collapse">Admins</a>
+        <div id="user_all" class="collapse">
+            <br>
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                      <th>User ID</th>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>Role / Access Level</th>
+                      <th>Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in allusers() %}
+                    <tr>
+                      <th>{{ data['id'] }}</th>
+                      <th>{{ data['firstname'] }}</th>
+                      <th>{{ data['lastname'] }}</th>
+                      <th>{{ data['access_level'] }}</th>
+                      <th><button type="submit" class="btn btn-default"><a href="/remove_user/{{ data['id'] }} / {{ data['access_level'] }}">Remove User</a></button></th>
+                    </tr>
+                    {%  endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="user_student" class="panel-collapse collapse">
+
+            <br><h4>Add A Student</h4>
+            <form action="/add_student/" class="form-inline">
+                <input type="text" class="form-control" name="s_lastname" placeholder="last name" required>
+                <input type="text" class="form-control" name="s_firstname" placeholder="first name" required>
+                <label for="sel1">Advisor ID</label>
+                <select class="form-control" name="s_advisorid" id="sel1">
+                    {% for data in allteachers() %}
+                        <option>{{ data['teacherid'] }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-success">ADD NEW STUDENT</button>
+            </form><br>
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>studentid</th>
+                        <th>firstname</th>
+                        <th>lastname</th>
+                        <th>advisorid</th>
+                        <th>Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in allstudents() %}
+                    <tr>
+                        <th>{{ data['studentid'] }}</th>
+                        <th>{{ data['firstname'] }}</th>
+                        <th>{{ data['lastname'] }}</th>
+                        <th>{{ data['advisorid'] }}</th>
+                        <th class="collapse in">
+                            <a href="#student{{ data['studentid'] }}" data-parent="#users" class="btn btn-info" data-toggle="collapse">Change Advisor</a>
+                            <button type="submit" class="btn btn-danger"><a style="color:white" href="/del_student/{{ data['studentid'] }}">REMOVE USER</a></button>
+                            <form action="/change_advisor/{{ data['studentid'] }}" class="form-inline collapse" id="student{{ data['studentid'] }}">
+                                <select class="form-control" name="new_advisorid{{ data['studentid'] }}">
+                                    {%  for data2 in allteachers() %}
+                                        <option>{{ data2['teacherid'] }}</option>>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn btn-danger">Change Advisor</button>
+                            </form>
+                        </th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="user_teacher" class="panel-collapse collapse">
+            <br><h4>Add A Teacher</h4>
+            <form action="/add_teacher/" class="form-inline">
+                <input type="text" class="form-control" name="t_lastname" placeholder="last name" required>
+                <input type="text" class="form-control" name="t_firstname" placeholder="first name" required>
+                <button type="submit" class="btn btn-success">ADD NEW TEACHER</button>
+            </form><br>
+
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>teacherid</th>
+                        <th>first name</th>
+                        <th>last name</th>
+                        <th>Total Advising</th>
+                        <th>Total Courses</th>
+                        <th>Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in allteachers() %}
+                    <tr>
+                        <th>{{ data['teacherid'] }}</th>
+                        <th>{{ data['firstname'] }}</th>
+                        <th>{{ data['lastname'] }}</th>
+                        <th>
+                            {% if num_advising(data['teacherid']) == None %}
+                                0
+                            {% else %}
+                                {{ num_advising(data['teacherid'])[3] }}
+                            {% endif %}
+                        </th>
+                        <th>
+                            {% if num_teaching(data['teacherid']) == None %}
+                                0
+                            {% else %}
+                                {{ num_teaching(data['teacherid'])[1] }}
+                            {% endif %}
+                        </th>
+                        <th><button type="submit" class="btn btn-danger"><a style="color:white" href="/del_teacher/{{ data['teacherid'] }}">REMOVE USER</a></button></th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="user_admin" class="panel-collapse collapse">
+            <br><h4>Add New Admin</h4>
+            <form action="/add_admin/" class="form-inline">
+                <input type="text" class="form-control" name="a_lastname" placeholder="last name" required>
+                <input type="text" class="form-control" name="a_firstname" placeholder="first name" required>
+                <button type="submit" class="btn btn-success">ADD NEW ADMIN</button>
+            </form><br>
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>adminid</th>
+                        <th>first name</th>
+                        <th>last name</th>
+                        <th>Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in alladmins() %}
+                    <tr>
+                        <th>{{ data['adminid'] }}</th>
+                        <th>{{ data['firstname'] }}</th>
+                        <th>{{ data['lastname'] }}</th>
+                        <th><button type="submit" class="btn btn-danger"><a style="color:white" href="/del_admin/{{ data['adminid'] }}">REMOVE USER</a></button></th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
 <!--THE RELEVANT CONTACT INFORMATION IS HANDLED HERE-->
     <div id="courses" class="tab-pane fade">
-      <!--<h3 style="text-align:center">Useful Contacts</h3>-->
         <h3>Manage Courses</h3>
-        <!--
-
-        <form class="form-inline">
-          <div class="form-group">
-            <input type="text" class="form-control" placeholder="Enter Course"> 
-          </div>
-          <button type="submit" class="btn btn-default">Submit</button>
-        </form>
-
-    !-->
-      <table class="table table-hover table-bordered table-default">
+        <table class="table table-hover table-bordered table-default">
           <thead>
             <tr>
-              <td>Course</td>
+                <td>Course</td>
                 <td>Book Name</td>
-              <td>Student ID</td>
-
+                <td>Student ID</td>
                 <td>Student Name</td>
-              <td>Check-Out Date</td>
-              <td>Due Date</td>
-              <td>Overdue?</td>
-              <td>Email</td>
+                <td>Check-Out Date</td>
+                <td>Due Date</td>
+                <td>Overdue?</td>
+                <td>Email</td>
             </tr>
           </thead>
           {% for book in allbookscourses() %}
