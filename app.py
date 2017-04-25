@@ -161,7 +161,10 @@ def sqlcommands():
             cursor.execute(query)
             course_schema = ['semester']
             return [tup2dict(tup, course_schema) for tup in cursor.fetchall()]
-
+        def studentsforteacher(teacherid):
+            query = "SELECT * FROM student s NATURAL JOIN (SELECT * FROM takes NATURAL JOIN (SELECT * FROM course WHERE teacherid={}) c) t ORDER BY t.name, t.year, t.semester, s.studentid".format(teacherid)
+            cursor.execute(query)
+            return [tup2dict(tup,schemas['student']+schemas['course']) for tup in cursor.fetchall()]
         def year():
             query = "SELECT DISTINCT(year) from COURSE"
             cursor.execute(query)
