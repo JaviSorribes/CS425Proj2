@@ -196,7 +196,7 @@
               <th>{{ stud['studentid'] }}</th>
               <th>{{ stud['firstname'] }}</th>
               <th>{{ stud['lastname'] }}</th>
-              <th></th>
+              <th>{{ hasbookforcourse(stud['studentid'],stud['name'],stud['semester'],stud['year']) }}</th>
             </tr>
             {% endfor %}
             <tr>

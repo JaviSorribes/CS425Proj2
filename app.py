@@ -136,6 +136,11 @@ def sqlcommands():
             book_Group = ['isbn', 'title', 'coursename', 'courseyear', 'coursesemester', 'quantity', 'cost']
             return [tup2dict(tup, book_Group) for tup in cursor.fetchall()]
 
+        def hasbookforcourse(studentid,name,semester,year):
+            query = 'SELECT * FROM book WHERE studentid="{}" AND coursename="{}" AND coursesemester="{}" AND courseyear="{}"'.format(studentid,name,semester,year)
+            cursor.execute(query)
+            return 'Yes' if cursor.fetchone() else 'No'
+
         def num_advising(teacherid):
             query = "SELECT T.teacherid, T.lastname, T.firstname, S.numstudents FROM library.teacher as T, (SELECT advisorid as teacherid, COUNT(*) as numstudents FROM library.student GROUP BY advisorid) as S WHERE T.teacherid = S.teacherid AND S.teacherid = \"{}\"".format(teacherid)
             cursor.execute(query)
