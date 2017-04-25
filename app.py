@@ -245,31 +245,48 @@ def request_book_student():
 
 @app.route("/add_admin/")
 def add_admin():
-    fname = request.args['a_firstname']
-    lname = request.args['a_lastname']
+    fname = request.args['a_firstname'].capitalize()
+    lname = request.args['a_lastname'].capitalize()
     query = "INSERT INTO admin (firstname,lastname) VALUES (\"{}\",\"{}\")".format(fname,lname)
     cursor.execute(query)
     conn.commit()
+    #insert in user table
+    add_user(fname, lname, 'admin')
     return render_template('admin.html',user=user,today=date.today())
 
 @app.route("/add_student/")
 def add_student():
-    fname = request.args['s_firstname']
-    lname = request.args['s_lastname']
+    fname = request.args['s_firstname'].capitalize()
+    lname = request.args['s_lastname'].capitalize()
     advisorid = request.args['s_advisorid']
     query = "INSERT INTO student (firstname,lastname,advisorid) VALUES (\"{}\",\"{}\",\"{}\")".format(fname,lname,advisorid)
     cursor.execute(query)
     conn.commit()
+    #insert in user table
+    add_user(fname, lname, 'student')
     return render_template('admin.html',user=user,today=date.today())
 
 @app.route("/add_teacher/")
 def add_teacher():
-    fname = request.args['t_firstname']
-    lname = request.args['t_lastname']
+    fname = request.args['t_firstname'].capitalize()
+    lname = request.args['t_lastname'].capitalize()
     query = "INSERT INTO teacher (firstname,lastname) VALUES (\"{}\",\"{}\")".format(fname,lname)
     cursor.execute(query)
     conn.commit()
+    #insert in user table
+    add_user(fname, lname, 'teacher')
     return render_template('admin.html',user=user, today=date.today())
+
+def add_user(fname,lname,access_level):
+    roles = {'admin':1, 'teacher': 2, 'student': 3}
+    query = "SELECT MAX({0}id) FROM {0};".format(access_level)
+    cursor.execute(query)
+    id = cursor.fetchone()[0]
+    username = (fname[0]+lname).lower()
+    password = fname.lower()
+    query = "INSERT INTO user (username,userpass,role,id) VALUES (\"{}\",\"{}\",\"{}\",{})".format(username,password,roles[access_level.strip()],id)
+    cursor.execute(query)
+    conn.commit()
 
 @app.route("/del_admin/<adminid>")
 def del_admin(adminid):
@@ -283,7 +300,8 @@ def del_admin(adminid):
 @app.route("/del_student/<studentid>")
 def del_student(studentid):
     #make sure duedates and datecheckedouts are updated before deleting the student
-    query = "UPDATE book SET duedate = NULL, datecheckedout = NULL WHERE book.studentid = {};".format(studentid)
+    query = "UPDATE book SET duedate = NULL, datecheckedout = NULL WHERE studentid = \"{}\"".format(studentid)
+    print(query)
     cursor.execute(query)
     conn.commit()
     query = "DELETE FROM student WHERE studentid = \"{}\"".format(studentid)
@@ -373,15 +391,11 @@ def change_advisor(studentid):
 
 @app.route("/remove_user/<id>/<access_level>")
 def remove_user(id,access_level):
-    query= "SELECT * FROM {} WHERE {}id={}".format(access_level,access_level,id)
-    cursor.execute(query)
     if access_level == 'student':
-        answer = [tup2dict(tup, 'student') for tup in cursor.fetchall()]
-    elif access_level == 'teacher':
-        answer = [tup2dict(tup, 'teacher') for tup in cursor.fetchall()]
-    else:
-        answer = [tup2dict(tup, 'admin') for tup in cursor.fetchall()]
-    answer = answer[0]
+        # make sure duedates and datecheckedouts are updated before deleting the student
+        query = "UPDATE book SET duedate = NULL, datecheckedout = NULL WHERE studentid = \"{}\"".format(id)
+        cursor.execute(query)
+        conn.commit()
     query = "DELETE FROM {} WHERE {}id = {}".format(access_level,access_level,id)
     cursor.execute(query)
     conn.commit()
