@@ -78,6 +78,10 @@ def sqlcommands():
             cursor.execute(query)
             book_schema = schemas['book']
             return [tup2dict(tup,'book') for tup in cursor.fetchall()]
+        def allcourses():
+            query = "SELECT * FROM course"
+            cursor.execute(query)
+            return [tup2dict(tup,'course') for tup in cursor.fetchall()]
         def allstudents(): #an example
             query = "SELECT * FROM student"
             cursor.execute(query)
@@ -281,6 +285,17 @@ def add_teacher():
     add_user(fname, lname, 'teacher')
     return render_template('admin.html',user=user, today=date.today())
 
+@app.route("/add_course/")
+def add_course():
+    cname = request.args['c_name']
+    cyear = request.args['c_year']
+    csem = request.args['c_sem']
+    ctid = request.args['c_tid']
+    query = "INSERT INTO course (name,year,semester,teacherid) VALUES (\"{}\",\"{}\",\"{}\",\"{}\")".format(cname,cyear,csem,ctid)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('admin.html',user=user, today=date.today())
+
 def add_user(fname,lname,access_level):
     roles = {'admin':1, 'teacher': 2, 'student': 3}
     query = "SELECT MAX({0}id) FROM {0};".format(access_level)
@@ -323,6 +338,17 @@ def del_teacher(teacherid):
     #delete from user table:
     del_user('teacher',teacherid)
     return render_template('admin.html',user=user,today=date.today())
+
+@app.route("/del_course/<name>/<year>/<semester>")
+def del_course(name, year, semester):
+    query = "SELECT * FROM course WHERE name=\"{}\" AND year=\"{}\" AND semester=\"{}\"".format(name,year,semester)
+    cursor.execute(query)
+    answer = [tup2dict(tup, 'course') for tup in cursor.fetchall()]
+    answer = answer[0]
+    query = "DELETE FROM course WHERE name=\"{}\" AND year=\"{}\" AND semester=\"{}\"".format(name,year,semester)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('admin.html', user=user, today=date.today())
 
 def del_user(access_level,id):
     roles = {'admin':1, 'teacher': 2, 'student': 3}
@@ -392,6 +418,18 @@ def change_advisor(studentid):
     conn.commit()
     return render_template('admin.html', user=user, today=date.today())
 
+@app.route("/change_cteacher/<name>/<year>/<semester>")
+def change_cteacher(name,year,semester):
+    s = "new_cteachid" + str(name) + str(year) + str(semester)
+    teacherid = request.args[s]
+    query = "SELECT * FROM course WHERE name = \"{}\" AND year = \"{}\" AND semester = \"{}\"".format(name,year,semester)
+    cursor.execute(query)
+    answer = [tup2dict(tup, 'course') for tup in cursor.fetchall()]
+    answer = answer[0]
+    query = "UPDATE course SET teacherid = \"{}\" WHERE name = \"{}\" AND year = \"{}\" AND semester = \"{}\"".format(teacherid, name, year, semester)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('admin.html', user=user, today=date.today())
 
 @app.route("/remove_user/<id>/<access_level>")
 def remove_user(id,access_level):
