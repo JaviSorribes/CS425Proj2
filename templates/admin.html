@@ -45,6 +45,7 @@
         <li><a data-toggle="tab" href="#studentcheckout">Checkout Report Student</a></li>
         <li><a data-toggle="tab" href="#overduefees">Overdue Fees</a></li>
         <li><a data-toggle="tab" href="#managecourses">Manage Courses</a></li>
+        <li><a data-toggle="tab" href="#assigncourses">Assign Courses</a></li>
     </ul> 
     <ul class="nav navbar-nav navbar-right" style="padding-right:10px">
       <p class="navbar-text">Signed in as: Admin</p>
@@ -491,6 +492,46 @@
                                 <button type="submit" class="btn btn-danger">Change Teacher</button>
                             </form>
                         </th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+    </div>
+
+        <div id="assigncourses" class="tab-pane fade">
+        <h3>Assign Courses</h3>
+
+            <br><h4>Add A Course</h4>
+            <form action="/assign_course/" class="form-inline">
+                <label for="sel1">Student ID</label>
+                <select class="form-control" name="ac_sid" id="sel1">
+                    {% for data in allstudents() %}
+                        <option>{{ data['studentid'] }}</option>
+                    {% endfor %}
+                </select>
+                <input type="text" class="form-control" name="ac_name" placeholder="course name" required>
+                <input type="text" class="form-control" name="ac_year" placeholder="course year" required>
+                <input type="text" class="form-control" name="ac_sem" placeholder="course semester" required>
+                <button type="submit" class="btn btn-success">ADD NEW COURSE</button>
+            </form><br>
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>studentid</th>
+                        <th>name</th>
+                        <th>year</th>
+                        <th>semester</th>
+                        <th>Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in allcoursesassigned() %}
+                    <tr>
+                        <th>{{ data['studentid'] }}</th>
+                        <th>{{ data['name'] }}</th>
+                        <th>{{ data['year'] }}</th>
+                        <th>{{ data['semester'] }}</th>
+                        <th><button type="submit" class="btn btn-danger"><a style="color:white" href="/remove_student/{{data['studentid']}}/{{ data['name'] }}/{{data['year']}}/{{data['semester']}}">REMOVE STUDENT</a></button></th>
                     </tr>
                     {% endfor %}
                 </tbody>

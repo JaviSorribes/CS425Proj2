@@ -82,6 +82,10 @@ def sqlcommands():
             query = "SELECT * FROM course"
             cursor.execute(query)
             return [tup2dict(tup,'course') for tup in cursor.fetchall()]
+        def allcoursesassigned():
+            query = "SELECT * FROM takes"
+            cursor.execute(query)
+            return [tup2dict(tup, 'takes') for tup in cursor.fetchall()]
         def allstudents(): #an example
             query = "SELECT * FROM student"
             cursor.execute(query)
@@ -304,6 +308,17 @@ def add_course():
     conn.commit()
     return render_template('admin.html',user=user, today=date.today())
 
+@app.route("/assign_course/")
+def assign_course():
+    acsid = request.args['ac_sid']
+    acname = request.args['ac_name']
+    acyear = request.args['ac_year']
+    acsem = request.args['ac_sem']
+    query = "INSERT INTO takes (name,year,semester,studentid) VALUES (\"{}\",\"{}\",\"{}\",\"{}\")".format(acname,acyear,acsem,acsid)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('admin.html', user=user, today=date.today())
+
 def add_user(fname,lname,access_level):
     roles = {'admin':1, 'teacher': 2, 'student': 3}
     query = "SELECT MAX({0}id) FROM {0};".format(access_level)
@@ -354,6 +369,17 @@ def del_course(name, year, semester):
     answer = [tup2dict(tup, 'course') for tup in cursor.fetchall()]
     answer = answer[0]
     query = "DELETE FROM course WHERE name=\"{}\" AND year=\"{}\" AND semester=\"{}\"".format(name,year,semester)
+    cursor.execute(query)
+    conn.commit()
+    return render_template('admin.html', user=user, today=date.today())
+
+@app.route("/remove_student/<studentid>/<name>/<year>/<semester>")
+def remove_student(studentid, name,year,semester):
+    query = "SELECT * FROM takes WHERE studentid=\"{}\" AND name=\"{}\" AND year=\"{}\" AND semester=\"{}\"".format(studentid,name, year, semester)
+    cursor.execute(query)
+    answer = [tup2dict(tup, 'takes') for tup in cursor.fetchall()]
+    answer = answer[0]
+    query = "DELETE FROM takes WHERE studentid=\"{}\" AND name=\"{}\" AND year=\"{}\" AND semester=\"{}\"".format(studentid,name, year, semester)
     cursor.execute(query)
     conn.commit()
     return render_template('admin.html', user=user, today=date.today())
