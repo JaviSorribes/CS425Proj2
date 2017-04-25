@@ -207,7 +207,7 @@ def books():
     query = "SELECT * FROM book WHERE title = \"{}\"".format(request.args['bookname'])
     cursor.execute(query)
     books = [tup2dict(tup,'book') for tup in cursor.fetchall()]
-    print(books)
+    #print(books)
     if books:
         return render_template('admin-book.html',books=books, user=user)
     else:
@@ -273,36 +273,40 @@ def add_teacher():
 
 @app.route("/del_admin/<adminid>")
 def del_admin(adminid):
-    query = "SELECT * FROM admin WHERE adminid = \"{}\"".format(adminid)
-    cursor.execute(query)
-    answer = [tup2dict(tup,'admin') for tup in cursor.fetchall()]
-    answer = answer[0]
     query = "DELETE FROM admin WHERE adminid = \"{}\"".format(adminid)
     cursor.execute(query)
     conn.commit()
+    #delete from user table:
+    del_user('admin',adminid)
     return render_template('admin.html',user=user,today=date.today())
 
 @app.route("/del_student/<studentid>")
 def del_student(studentid):
-    query = "SELECT * FROM student WHERE studentid = \"{}\"".format(studentid)
+    #make sure duedates and datecheckedouts are updated before deleting the student
+    query = "UPDATE book SET duedate = NULL, datecheckedout = NULL WHERE book.studentid = {};".format(studentid)
     cursor.execute(query)
-    answer = [tup2dict(tup,'student') for tup in cursor.fetchall()]
-    answer = answer[0]
+    conn.commit()
     query = "DELETE FROM student WHERE studentid = \"{}\"".format(studentid)
     cursor.execute(query)
     conn.commit()
+    #delete from user table:
+    del_user('student',studentid)
     return render_template('admin.html',user = user, today = date.today())
 
 @app.route("/del_teacher/<teacherid>")
 def del_teacher(teacherid):
-    query = "SELECT * FROM teacher WHERE teacherid = \"{}\"".format(teacherid)
-    cursor.execute(query)
-    answer = [tup2dict(tup,'teacher') for tup in cursor.fetchall()]
-    answer = answer[0]
     query = "DELETE FROM teacher WHERE teacherid = \"{}\"".format(teacherid)
     cursor.execute(query)
     conn.commit()
+    #delete from user table:
+    del_user('teacher',teacherid)
     return render_template('admin.html',user=user,today=date.today())
+
+def del_user(access_level,id):
+    roles = {'admin':1, 'teacher': 2, 'student': 3}
+    query = "DELETE FROM user WHERE role={} AND id={}".format(roles[access_level.strip()],id)
+    cursor.execute(query)
+    conn.commit()
 
 @app.route("/request_book_teacher")
 def request_book_teacher():
@@ -381,6 +385,8 @@ def remove_user(id,access_level):
     query = "DELETE FROM {} WHERE {}id = {}".format(access_level,access_level,id)
     cursor.execute(query)
     conn.commit()
+    #delete from user table:
+    del_user(access_level,id)
     return render_template('admin.html', user=user, today=date.today())
 
 @app.route("/add_book")
