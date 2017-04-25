@@ -68,7 +68,7 @@ def sqlcommands():
             return [tup2dict(tup,'book') for tup in cursor.fetchall()]
         def allbooksstudentavailable(studentid):
             #query = "SELECT DISTINCT book.bookid, book.isbn, book.cost, book.duedate, book.datecheckedout, book.title, book.coursename, book.courseyear, book.coursesemester, book.studentid FROM (SELECT takes.name, takes.year, takes.semester FROM student RIGHT JOIN takes ON student.studentid=takes.studentid WHERE student.studentid={}) AS dtable RIGHT JOIN book ON book.coursename=dtable.name AND book.courseyear=dtable.year AND book.coursesemester=dtable.semester WHERE book.studentid is null AND dtable.name is not null".format(studentid)
-            query = "SELECT dt2.bookid, dt2.isbn, dt2.cost, dt2.duedate, dt2.datecheckedout, dt2.title, dt2.coursename, dt2.courseyear, dt2.coursesemester, dt2.studentid FROM (SELECT book.bookid, book.isbn, book.cost, book.duedate, book.datecheckedout, book.title, book.coursename, book.courseyear, book.coursesemester, book.studentid FROM book RIGHT JOIN (SELECT * FROM takes WHERE studentid={}) AS dt1 ON book.coursename=dt1.name AND book.courseyear=dt1.year AND book.coursesemester=dt1.semester WHERE book.studentid IS NULL) AS dt2 LEFT JOIN (SELECT * from book where studentid={}) AS dt3 ON dt2.coursename=dt3.coursename AND dt2.courseyear=dt2.courseyear AND dt2.coursesemester=dt3.coursesemester WHERE dt3.bookid IS NULL ORDER BY dt2.coursename, dt2.courseyear, dt2.coursesemester".format(studentid,studentid)
+            query = "SELECT dt2.bookid, dt2.isbn, dt2.cost, dt2.duedate, dt2.datecheckedout, dt2.title, dt2.coursename, dt2.courseyear, dt2.coursesemester, dt2.studentid FROM (SELECT book.bookid, book.isbn, book.cost, book.duedate, book.datecheckedout, book.title, book.coursename, book.courseyear, book.coursesemester, book.studentid FROM book RIGHT JOIN (SELECT * FROM takes WHERE studentid={}) AS dt1 ON book.coursename=dt1.name AND book.courseyear=dt1.year AND book.coursesemester=dt1.semester WHERE book.studentid IS NULL) AS dt2 LEFT JOIN (SELECT * from book where studentid={}) AS dt3 ON dt2.coursename=dt3.coursename AND dt2.courseyear=dt2.courseyear AND dt2.coursesemester=dt3.coursesemester WHERE dt3.bookid IS NULL AND dt2.bookid IS NOT NULL ORDER BY dt2.coursename, dt2.courseyear, dt2.coursesemester".format(studentid,studentid)
 
             cursor.execute(query)
             book_schema = schemas['book']
@@ -110,7 +110,7 @@ def sqlcommands():
             return [tup2dict(tup,'book') for tup in cursor.fetchall()]
 
         def contacts():
-            query = "SELECT studentid, student_firstname, student_lastname, amountdue, pc.parentid, parent_firstname, parent_lastname, contact AS parent_contact FROM parent_contact pc JOIN (SELECT p.parentid, s.studentid, s.firstname AS student_firstname, s.lastname AS student_lastname, s.amountdue, p.firstname AS parent_firstname, p.lastname AS parent_lastname FROM student s JOIN (SELECT * FROM has NATURAL JOIN parent) p ON(s.studentid=p.studentid) WHERE s.amountdue>0) sp ON(pc.parentid=sp.parentid) ORDER BY studentid;"
+            query = "(SELECT studentid, student_firstname, student_lastname, amountdue, pc.parentid, parent_firstname, parent_lastname, contact AS parent_contact FROM parent_contact pc JOIN (SELECT p.parentid, s.studentid, s.firstname AS student_firstname, s.lastname AS student_lastname, s.amountdue, p.firstname AS parent_firstname, p.lastname AS parent_lastname FROM student s JOIN (SELECT * FROM has NATURAL JOIN parent) p ON(s.studentid=p.studentid) WHERE s.amountdue>0) sp ON(pc.parentid=sp.parentid)) UNION (SELECT studentid, firstname AS student_firstname, lastname AS student_lastname, amountdue,  -1 AS parentid, '-' AS parent_firstname, '' AS parent_lastname, '-' AS parent_contact FROM student WHERE studentid NOT IN (SELECT studentid FROM has) AND amountdue>0) ORDER BY studentid, parentid;"
             cursor.execute(query)
             contact_schema = ['studentid', 'student_firstname', 'student_lastname', 'amountdue', 'parentid', 'parent_firstname', 'parent_lastname', 'parent_contact']
             return [tup2dict(tup,contact_schema) for tup in cursor.fetchall()]
@@ -211,7 +211,7 @@ def books():
     query = "SELECT * FROM book WHERE title = \"{}\"".format(request.args['bookname'])
     cursor.execute(query)
     books = [tup2dict(tup,'book') for tup in cursor.fetchall()]
-    print(books)
+    #print(books)
     if books:
         return render_template('admin-book.html',books=books, user=user)
     else:
@@ -249,30 +249,36 @@ def request_book_student():
 
 @app.route("/add_admin/")
 def add_admin():
-    fname = request.args['a_firstname']
-    lname = request.args['a_lastname']
+    fname = request.args['a_firstname'].capitalize()
+    lname = request.args['a_lastname'].capitalize()
     query = "INSERT INTO admin (firstname,lastname) VALUES (\"{}\",\"{}\")".format(fname,lname)
     cursor.execute(query)
     conn.commit()
+    #insert in user table
+    add_user(fname, lname, 'admin')
     return render_template('admin.html',user=user,today=date.today())
 
 @app.route("/add_student/")
 def add_student():
-    fname = request.args['s_firstname']
-    lname = request.args['s_lastname']
+    fname = request.args['s_firstname'].capitalize()
+    lname = request.args['s_lastname'].capitalize()
     advisorid = request.args['s_advisorid']
     query = "INSERT INTO student (firstname,lastname,advisorid) VALUES (\"{}\",\"{}\",\"{}\")".format(fname,lname,advisorid)
     cursor.execute(query)
     conn.commit()
+    #insert in user table
+    add_user(fname, lname, 'student')
     return render_template('admin.html',user=user,today=date.today())
 
 @app.route("/add_teacher/")
 def add_teacher():
-    fname = request.args['t_firstname']
-    lname = request.args['t_lastname']
+    fname = request.args['t_firstname'].capitalize()
+    lname = request.args['t_lastname'].capitalize()
     query = "INSERT INTO teacher (firstname,lastname) VALUES (\"{}\",\"{}\")".format(fname,lname)
     cursor.execute(query)
     conn.commit()
+    #insert in user table
+    add_user(fname, lname, 'teacher')
     return render_template('admin.html',user=user, today=date.today())
 
 @app.route("/add_course/")
@@ -286,37 +292,47 @@ def add_course():
     conn.commit()
     return render_template('admin.html',user=user, today=date.today())
 
+def add_user(fname,lname,access_level):
+    roles = {'admin':1, 'teacher': 2, 'student': 3}
+    query = "SELECT MAX({0}id) FROM {0};".format(access_level)
+    cursor.execute(query)
+    id = cursor.fetchone()[0]
+    username = (fname[0]+lname).lower()
+    password = fname.lower()
+    query = "INSERT INTO user (username,userpass,role,id) VALUES (\"{}\",\"{}\",\"{}\",{})".format(username,password,roles[access_level.strip()],id)
+    cursor.execute(query)
+    conn.commit()
+
 @app.route("/del_admin/<adminid>")
 def del_admin(adminid):
-    query = "SELECT * FROM admin WHERE adminid = \"{}\"".format(adminid)
-    cursor.execute(query)
-    answer = [tup2dict(tup,'admin') for tup in cursor.fetchall()]
-    answer = answer[0]
     query = "DELETE FROM admin WHERE adminid = \"{}\"".format(adminid)
     cursor.execute(query)
     conn.commit()
+    #delete from user table:
+    del_user('admin',adminid)
     return render_template('admin.html',user=user,today=date.today())
 
 @app.route("/del_student/<studentid>")
 def del_student(studentid):
-    query = "SELECT * FROM student WHERE studentid = \"{}\"".format(studentid)
+    #make sure duedates and datecheckedouts are updated before deleting the student
+    query = "UPDATE book SET duedate = NULL, datecheckedout = NULL WHERE studentid = \"{}\"".format(studentid)
+    print(query)
     cursor.execute(query)
-    answer = [tup2dict(tup,'student') for tup in cursor.fetchall()]
-    answer = answer[0]
+    conn.commit()
     query = "DELETE FROM student WHERE studentid = \"{}\"".format(studentid)
     cursor.execute(query)
     conn.commit()
+    #delete from user table:
+    del_user('student',studentid)
     return render_template('admin.html',user = user, today = date.today())
 
 @app.route("/del_teacher/<teacherid>")
 def del_teacher(teacherid):
-    query = "SELECT * FROM teacher WHERE teacherid = \"{}\"".format(teacherid)
-    cursor.execute(query)
-    answer = [tup2dict(tup,'teacher') for tup in cursor.fetchall()]
-    answer = answer[0]
     query = "DELETE FROM teacher WHERE teacherid = \"{}\"".format(teacherid)
     cursor.execute(query)
     conn.commit()
+    #delete from user table:
+    del_user('teacher',teacherid)
     return render_template('admin.html',user=user,today=date.today())
 
 @app.route("/del_course/<name>/<year>/<semester>")
@@ -329,6 +345,12 @@ def del_course(name, year, semester):
     cursor.execute(query)
     conn.commit()
     return render_template('admin.html', user=user, today=date.today())
+
+def del_user(access_level,id):
+    roles = {'admin':1, 'teacher': 2, 'student': 3}
+    query = "DELETE FROM user WHERE role={} AND id={}".format(roles[access_level.strip()],id)
+    cursor.execute(query)
+    conn.commit()
 
 @app.route("/request_book_teacher")
 def request_book_teacher():
@@ -407,18 +429,16 @@ def change_cteacher(name,year,semester):
 
 @app.route("/remove_user/<id>/<access_level>")
 def remove_user(id,access_level):
-    query= "SELECT * FROM {} WHERE {}id={}".format(access_level,access_level,id)
-    cursor.execute(query)
     if access_level == 'student':
-        answer = [tup2dict(tup, 'student') for tup in cursor.fetchall()]
-    elif access_level == 'teacher':
-        answer = [tup2dict(tup, 'teacher') for tup in cursor.fetchall()]
-    else:
-        answer = [tup2dict(tup, 'admin') for tup in cursor.fetchall()]
-    answer = answer[0]
+        # make sure duedates and datecheckedouts are updated before deleting the student
+        query = "UPDATE book SET duedate = NULL, datecheckedout = NULL WHERE studentid = \"{}\"".format(id)
+        cursor.execute(query)
+        conn.commit()
     query = "DELETE FROM {} WHERE {}id = {}".format(access_level,access_level,id)
     cursor.execute(query)
     conn.commit()
+    #delete from user table:
+    del_user(access_level,id)
     return render_template('admin.html', user=user, today=date.today())
 
 @app.route("/add_book")
