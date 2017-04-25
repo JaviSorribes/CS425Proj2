@@ -41,8 +41,8 @@
         <li><a data-toggle="tab" href="#overview">Overview</a></li>
         <li class="active"><a data-toggle="tab" href="#books">Books</a></li>
         <li><a data-toggle="tab" href="#users">Manage Users</a></li>
-        <li><a data-toggle="tab" href="#courses">Course Books</a></li>
-        <li><a data-toggle="tab" href="#studentcheckout">Checkout Report Student</a></li>
+         <li><a data-toggle="tab" href="#courses">Course Books</a></li>
+        <li><a data-toggle="tab" href="#studentcheckout">Checked-Outs</a></li>
         <li><a data-toggle="tab" href="#overduefees">Overdue Fees</a></li>
         <li><a data-toggle="tab" href="#managecourses">Manage Courses</a></li>
         <li><a data-toggle="tab" href="#assigncourses">Assign Courses</a></li>
@@ -54,11 +54,16 @@
   </div>
 
 </nav>
+
 <div class="container bg-muted" style="padding:0px; background-color:white">
     <div class="tab-content" style="    margin-top:30px">
 
 <!--THE OVERVIEW FOR THE USER IS SHOWN HERE-->
     <div id="overview" class="tab-pane fade">
+      <br>
+<br>
+        <br>
+<br>
       <h3>Overview</h3>
       {% block user %}
         <p>A brief summary of your account, {{ user["firstname"] }}
@@ -97,6 +102,14 @@
 
 <!--THE USERS BOOKS ARE HANDLED HERE-->
     <div id="books" class="tab-pane fade  in active">
+        <br>
+<br>
+        <br>
+<br>
+              <br>
+<br>
+        <br>
+<br>
       <h3>Book Database</h3>
       <table width="100%" height="194" border="1">
         <tbody>
@@ -124,18 +137,22 @@
       </table>
       <p>&nbsp;</p>
       <p>&nbsp;</p>
-      <form action="/books" class="form-inline">
-          <div class="form-group">
-            <input type="text" name="bookname" class="form-control" placeholder="Book Name">
-          </div>
-          <button type="submit" class="btn btn-default">Submit</button>
-        </form>
+      <button class="btn btn-default" onclick="goBack()">Go Back</button>
+                    <script>
+                    function goBack() {
+                        window.history.back();
+                    }
+                    </script>
 
     </div>
 
 
 <!--THE STUDENT FEES TAB IS HANDLED HERE-->
     <div id="users" class="tab-pane fade">
+              <br>
+<br>
+        <br>
+<br>
         <h3>Manage Users</h3>
         <p>Click on the button to enlarge the table. Unclick to minimize the table</p>
             <a href="#user_all" data-parent="#users" class="btn btn-info active" data-toggle="collapse">All Users</a>
@@ -292,6 +309,10 @@
 
 <!--THE RELEVANT CONTACT INFORMATION IS HANDLED HERE-->
     <div id="courses" class="tab-pane fade">
+              <br>
+<br>
+        <br>
+<br>
         <h3>Manage Courses</h3>
         <table class="table table-hover table-bordered table-default">
           <thead>
@@ -322,6 +343,10 @@
         </table>
     </div>
     <div id="studentcheckout" class="tab-pane fade">
+              <br>
+<br>
+        <br>
+<br>
       <!--<h3 style="text-align:center">Useful Contacts</h3>-->
         <h3>Student Checkout Report</h3>
         <!--
@@ -358,6 +383,10 @@
     </div>
 
         <div id="overduefees" class="tab-pane fade">
+                  <br>
+<br>
+        <br>
+<br>
       <!--<h3 style="text-align:center">Useful Contacts</h3>-->
         <h3>Overdue Fees</h3>
         <!--
@@ -462,6 +491,10 @@
     </div>
 
         <div id="assigncourses" class="tab-pane fade">
+                  <br>
+<br>
+        <br>
+<br>
         <h3>Assign Courses</h3>
 
             <br><h4>Add A Course</h4>

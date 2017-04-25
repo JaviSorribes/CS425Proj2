@@ -98,24 +98,24 @@ INSERT INTO takes (name,year,semester,studentid) VALUES ('MATH374',2017,'spring'
 INSERT INTO takes (name,year,semester,studentid) VALUES ('CS487',2017,'spring',2);
 
 /*could omit the studentids here*/
-INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321369572',36.50,NULL,NULL,'Database Systems','CS425',2016,'fall',NULL);
-INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321369572',36.50,'2016-08-03','2016-07-04','Database Systems','CS425',2016,'summer',3);
-INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321369572',36.50,'2017-02-22','2017-01-23','Database Systems','CS425',2017,'spring',6);
-INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0060935464',20.10,NULL,NULL,'English Literature','LIT202',2017,'summer',NULL);
-INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0060935464',9.53,'2017-03-28','2017-02-26','English Literature','LIT202',2016,'spring',1);
-INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0139491570',56.00,'2017-04-29','2017-03-30','Complex Analysis, Determinants and Matrices','MATH333',2017,'spring',2);
-INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321210263',15.20,'2017-05-12','2017-04-12','Software Engineering for Engineers','CS487',2017,'spring',1);
-INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321369572',36.50,'2016-11-24','2016-10-25','Database Systems','CS425',2016,'fall',3);
-INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321369572',36.50,NULL,NULL,'Database Systems','CS425',2016,'summer',NULL);
-INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321369572',36.50,NULL,NULL,'Database Systems','CS425',2017,'spring',NULL);
-INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0060935464',20.10,NULL,NULL,'English Literature','LIT202',2017,'summer',NULL);
-INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0060935464',9.53,NULL,NULL,'English Literature','LIT202',2016,'spring',NULL);
-INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321210263',15.20,NULL,NULL,'Software Engineering for Engineers','CS487',2017,'spring',NULL);
-INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321369572',36.50,NULL,NULL,'Database Systems','CS425',2017,'spring',NULL);
+INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321369572',77.81,NULL,NULL,'Fundamentals of database systems','CS425',2016,'fall',NULL);
+INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321369572',77.81,'2016-08-03','2016-07-04','Fundamentals of database systems','CS425',2016,'summer',3);
+INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321369572',77.81,'2017-02-22','2017-01-23','Fundamentals of database systems','CS425',2017,'spring',6);
+INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0060935464',8.37,NULL,NULL,'To kill a mockingbird','LIT202',2017,'summer',NULL);
+INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0060935464',8.37,'2017-03-28','2017-02-26','To kill a mockingbird','LIT202',2016,'spring',1);
+INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0139491570',64.16,'2017-04-29','2017-03-30','Introduction to scientific computing','MATH333',2017,'spring',2);
+INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321210263',99.6,'2017-05-12','2017-04-12','Software engineering','CS487',2017,'spring',1);
+INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321369572',77.81,'2016-11-24','2016-10-25','Fundamentals of database systems','CS425',2016,'fall',3);
+INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321369572',77.81,NULL,NULL,'Fundamentals of database systems','CS425',2016,'summer',NULL);
+INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321369572',77.81,NULL,NULL,'Fundamentals of database systems','CS425',2017,'spring',NULL);
+INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0060935464',8.37,NULL,NULL,'To kill a mockingbird','LIT202',2017,'summer',NULL);
+INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0060935464',8.37,NULL,NULL,'To kill a mockingbird','LIT202',2016,'spring',NULL);
+INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321210263',99.6,NULL,NULL,'Software Engineering','CS487',2017,'spring',NULL);
+INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid) VALUES ('0321369572',77.81,NULL,NULL,'Fundamentals of database systems','CS425',2017,'spring',NULL);
 
-INSERT INTO book_request (isbn,cost,title,coursename,courseyear,coursesemester,requestedby,quantity) VALUES ('0139491570',56.00,'Complex Analysis, Determinants and Matrices','MATH333',2017,'spring','student',1);
-INSERT INTO book_request (isbn,cost,title,coursename,courseyear,coursesemester,requestedby,quantity) VALUES ('0060935464',9.53,'English Literature','LIT202',2017,'summer','teacher',5);
-INSERT INTO book_request (isbn,cost,title,coursename,courseyear,coursesemester,requestedby,quantity) VALUES ('0321210263',15.20,'Software Engineering for Engineers','CS487',2017,'spring','teacher',3);
+INSERT INTO book_request (isbn,cost,title,coursename,courseyear,coursesemester,requestedby,quantity) VALUES ('0139491570',64.16,'Introduction to scientific computing','MATH333',2017,'spring','student',1);
+INSERT INTO book_request (isbn,cost,title,coursename,courseyear,coursesemester,requestedby,quantity) VALUES ('0060935464',8.37,'To kill a mockingbird','LIT202',2017,'summer','teacher',5);
+INSERT INTO book_request (isbn,cost,title,coursename,courseyear,coursesemester,requestedby,quantity) VALUES ('0321210263',99.6,'Software Engineering','CS487',2017,'spring','teacher',3);
 
 /* Controls not being used
 INSERT INTO controls (adminid,bookid) VALUES (1,1);

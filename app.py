@@ -232,15 +232,15 @@ def books():
         query = "SELECT * FROM book ORDER BY title"
         cursor.execute(query)
         books = [tup2dict(tup,'book') for tup in cursor.fetchall()]
-        return render_template('admin-book.html', books = books, user = user)
+        return render_template('admin-book.html', books = books, user = user,today=date.today())
     query = "SELECT * FROM book WHERE title = \"{}\"".format(request.args['bookname'])
     cursor.execute(query)
     books = [tup2dict(tup,'book') for tup in cursor.fetchall()]
     #print(books)
     if books:
-        return render_template('admin-book.html',books=books, user=user)
+        return render_template('admin-book.html',books=books, user=user,today=date.today())
     else:
-        return render_template('admin-bookerror.html',user=user)
+        return render_template('admin-bookerror.html',user=user,today=date.today())
 
 @app.route("/request_book_student")
 def request_book_student():
@@ -263,7 +263,7 @@ def request_book_student():
             print("error")
         title = methodcalls.book_title(isbn)
         query = "INSERT INTO book_request (isbn,cost,title,coursename,courseyear,coursesemester,requestedby,quantity) " \
-                "VALUES ({},{},\"{}\",\"{}\",\"{}\",\"{}\",'student',1);".format(isbn, cost, title, course_name,
+                "VALUES (\'{}\',{},\"{}\",\"{}\",\"{}\",\"{}\",'student',1);".format(isbn, cost, title, course_name,
                                                                                   course_year, course_sem )
         cursor.execute(query)
         conn.commit()
@@ -415,13 +415,13 @@ def request_book_teacher():
         cost = methodcalls.book_price(isbn)
         title = methodcalls.book_title(isbn)
         query = "INSERT INTO book_request (isbn,cost,title,coursename,courseyear,coursesemester,requestedby,quantity) " \
-                "VALUES ({},{},\"{}\",\"{}\",\"{}\",\"{}\",'teacher',{});".format(isbn, cost, title, course_name,
+                "VALUES (\'{}\',{},\"{}\",\"{}\",\"{}\",\"{}\",'teacher',{});".format(isbn, cost, title, course_name,
                                                                                   course_year, course_sem, quantity)
         cursor.execute(query)
         conn.commit()
-        return render_template("teacher-requestdone.html")
+        return render_template("teacher-requestdone.html",user=user, today=date.today())
     else:
-        return render_template("teacher-requesterror.html")
+        return render_template("teacher-requesterror.html",user=user, today=date.today())
 
 
 @app.route("/book_info/<isbn>")
@@ -492,6 +492,7 @@ def remove_user(id,access_level):
 def add_book():
     isbn = request.args["ISBN"]
     methodcalls.book_all(isbn)
+
     if methodcalls.book_summary(isbn) == "eror":
         return render_template('admin-book-add-error.html',user=user,today=date.today())
     title = methodcalls.book_title(isbn)
@@ -500,8 +501,16 @@ def add_book():
     year = request.args["Year"]
     semester = request.args["Semester"].lower()
     quantity = request.args["Quantity"]
+    query = "SELECT * FROM course WHERE name = \"{}\" and year = {} and semester = \"{}\"".format(course,
+                                                                                                  year,
+                                                                                                  semester)
+    cursor.execute(query)
+    result_dic = [tup2dict(tup, schemas["course"]) for tup in cursor.fetchall()]
+    if not result_dic:
+        return render_template('admin-book-add-error.html', user=user, today=date.today())
     query = "INSERT INTO book (isbn,cost,duedate,datecheckedout,title,coursename,courseyear,coursesemester,studentid)" \
-            " VALUES ({},{},NULL,NULL,\"{}\",\"{}\",\"{}\",\"{}\",NULL);".format(isbn,cost,title,course,year,semester)
+            " VALUES (\'{}\',{},NULL,NULL,\"{}\",\"{}\",\"{}\",\"{}\",NULL);".format(isbn,cost,title,course,year,semester)
+    print(query)
     for i in range(int(quantity)):
         cursor.execute(query)
         conn.commit()
@@ -528,13 +537,15 @@ def book_request_grant(requestid):
     query = "DELETE FROM book_request WHERE requestid = {}".format(requestid)
     cursor.execute(query)
     conn.commit()
-    print(answer)
+    #print(answer)
+    quantity = answer["quantity"]
+    for _ in range(quantity):
     # First we have to insert the course into course.
-    query = "INSERT INTO book (isbn,cost,title,coursename,courseyear,coursesemester) VALUES ({},{},\'{}\',\'{}\',{},\'{}\')".format(answer["isbn"],answer["cost"],answer["title"],answer["coursename"],answer["courseyear"],answer["coursesemester"])
-    #print(query)
-    cursor.execute(query)
-    conn.commit()
-    return render_template('admin.html', user=user)
+        query = "INSERT INTO book (isbn,cost,title,coursename,courseyear,coursesemester) VALUES (\'{}\',{},\'{}\',\'{}\',{},\'{}\')".format(answer["isbn"],answer["cost"],answer["title"],answer["coursename"],answer["courseyear"],answer["coursesemester"])
+        #print(query)
+        cursor.execute(query)
+        conn.commit()
+    return render_template('admin.html', user=user,today=date.today())
 
 @app.route("/return_book/<studentid>/<bookid>")
 def return_book(studentid,bookid):
