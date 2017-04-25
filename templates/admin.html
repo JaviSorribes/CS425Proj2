@@ -428,17 +428,17 @@
                 {% set currstudentid = data['studentid'] %}
                 {% set currparentid = data['parentid'] %}
             {% elif currparentid != data['parentid'] %}
-              <td>"</td>
-              <td>"</td>
-              <td>"</td>
+              <td></td>
+              <td></td>
+              <td></td>
               <td>{{ data['parent_firstname'] }} {{ data['parent_lastname']}}</td>
               <td>{{ data['parent_contact'] }}</td>
                 {% set currparentid = data['parentid'] %}
             {% else %}
-              <td>"</td>
-              <td>"</td>
-              <td>"</td>
-              <td>"</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
               <td>{{ data['parent_contact'] }}</td>
             {% endif %}
           </tbody>
