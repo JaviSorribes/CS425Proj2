@@ -235,6 +235,7 @@
           <thead>
             <tr>
               <th>Course</th>
+              <th>Total Enrollment</th>
               <th>Student ID</th>
               <th>First Name</th>
               <th>Last Name</th>
@@ -243,12 +244,15 @@
           </thead>
           <tbody>
             {% set course = [] %}
-            {% for stud in studentsforteacher(user['teacherid']) %}
+            {% set students = studentsforteacher(user['teacherid']) %}
+            {% for stud in students %}
             <tr>
               {% if course != [stud['name'],stud['semester'],stud['year']] %}
-                <th>{{ stud['name'] }} {{ stud['semester'].capitalize() }} {{ stud['year'] }}</th>
                 {% set course = [stud['name'],stud['semester'],stud['year']] %}
+                <th>{{ stud['name'] }} {{ stud['semester'].capitalize() }} {{ stud['year'] }}</th>
+                <th>{{ enrollment(students,course) }}</th>
               {% else %}
+                <th></th>
                 <th></th>
               {% endif %}
               <th>{{ stud['studentid'] }}</th>

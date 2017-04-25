@@ -123,6 +123,9 @@ def sqlcommands():
             contact_schema = ['studentid', 'student_firstname', 'student_lastname', 'amountdue', 'parentid', 'parent_firstname', 'parent_lastname', 'parent_contact']
             return [tup2dict(tup,contact_schema) for tup in cursor.fetchall()]
 
+        def enrollment(students,course):
+            return len([s for s in students if [s['name'],s['semester'],s['year']]==course])
+
         def courses():
             query = "SELECT DISTINCT(name) from COURSE"
             cursor.execute(query)
