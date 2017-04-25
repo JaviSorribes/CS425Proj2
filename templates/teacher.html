@@ -167,7 +167,7 @@
 <!--THE STUDENT FEES TAB IS HANDLED HERE-->
     <div id="students" class="tab-pane fade">
       <h3>Your Students</h3>
-        <p>Track your students.
+        <p>You are the advisor for the students listed below.
         </p>
         <!---
           <form class="form-inline">
@@ -180,28 +180,38 @@
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
-              <th>Course</th>
               <th>Student ID</th>
               <th>First Name</th>
               <th>Last Name</th>
-              <th>Has Book</th>
+              <th>Parent Name</th>
+              <th>Parent Contact</th>
             </tr>  
           </thead>
           <tbody>
-            {% set course = [] %}
-            {% for stud in studentsforteacher(user['teacherid']) %}
-            <tr>
-              {% if course != [stud['name'],stud['semester'],stud['year']] %}
-                <th>{{ stud['name'] }} {{ stud['semester'].capitalize() }} {{ stud['year'] }}</th>
-                {% set course = [stud['name'],stud['semester'],stud['year']] %}
-              {% else %}
-                <th></th>
-              {% endif %}
-              <th>{{ stud['studentid'] }}</th>
-              <th>{{ stud['firstname'] }}</th>
-              <th>{{ stud['lastname'] }}</th>
-              <th>{{ hasbookforcourse(stud['studentid'],stud['name'],stud['semester'],stud['year']) }}</th>
-            </tr>
+            {% set currstudentid = -1 %}
+            {% for stud in studentsforadvisor(user['teacherid']) %}
+                {% set currparentid = -1 %}
+                {% for data in parentcontacts(stud['studentid']) %}
+                <tr>
+                    {% if currstudentid != stud['studentid'] %}
+                        <th>{{ stud['studentid'] }}</th>
+                        <th>{{ stud['firstname'] }}</th>
+                        <th>{{ stud['lastname'] }}</th>
+                        {% set currstudentid = stud['studentid'] %}
+                    {% else %}
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    {% endif %}
+                    {% if currparentid != data['parentid'] %}
+                        <th>{{ data['firstname'] }} {{ data['lastname'] }}</th>
+                        {% set currparentid = data['parentid'] %}
+                     {% else %}
+                        <th></th>
+                    {% endif %}
+                        <th>{{ data['contact'] }}</th>
+                </tr>
+                {% endfor %}
             {% endfor %}
           </tbody>
         </table>
