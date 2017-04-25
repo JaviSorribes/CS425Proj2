@@ -112,7 +112,11 @@ def sqlcommands():
             cursor.execute(query)
             #temp = [s for s in cursor.fetchall()]
             return [tup2dict(tup,'book') for tup in cursor.fetchall()]
-
+        def booksforteacher(teacherid):
+            query = 'SELECT b.title, b.isbn, b.coursename, b.coursesemester, b.courseyear, COUNT(*), b.cost FROM book b JOIN (SELECT * FROM course WHERE teacherid={}) c ON b.coursename=c.name AND b.coursesemester=c.semester AND b.courseyear=c.year WHERE studentid IS NULL GROUP BY b.coursename, b.coursesemester, b.courseyear, b.title, b.isbn, b.cost ORDER BY b.coursename, b.coursesemester, b.courseyear, b.title, b.isbn, b.cost'.format(teacherid)
+            cursor.execute(query)
+            a_schema = ['title','isbn','coursename','coursesemester','courseyear','quantity','cost']
+            return [tup2dict(tup,a_schema) for tup in cursor.fetchall()]
         def contacts():
             query = "(SELECT studentid, student_firstname, student_lastname, amountdue, pc.parentid, parent_firstname, parent_lastname, contact AS parent_contact FROM parent_contact pc JOIN (SELECT p.parentid, s.studentid, s.firstname AS student_firstname, s.lastname AS student_lastname, s.amountdue, p.firstname AS parent_firstname, p.lastname AS parent_lastname FROM student s JOIN (SELECT * FROM has NATURAL JOIN parent) p ON(s.studentid=p.studentid) WHERE s.amountdue>0) sp ON(pc.parentid=sp.parentid)) UNION (SELECT studentid, firstname AS student_firstname, lastname AS student_lastname, amountdue,  -1 AS parentid, '-' AS parent_firstname, '' AS parent_lastname, '-' AS parent_contact FROM student WHERE studentid NOT IN (SELECT studentid FROM has) AND amountdue>0) ORDER BY studentid, parentid;"
             cursor.execute(query)
@@ -161,7 +165,10 @@ def sqlcommands():
             cursor.execute(query)
             course_schema = ['semester']
             return [tup2dict(tup, course_schema) for tup in cursor.fetchall()]
-
+        def studentsforteacher(teacherid):
+            query = "SELECT * FROM student s NATURAL JOIN (SELECT * FROM takes NATURAL JOIN (SELECT * FROM course WHERE teacherid={}) c) t ORDER BY t.name, t.year, t.semester, s.studentid".format(teacherid)
+            cursor.execute(query)
+            return [tup2dict(tup,schemas['student']+schemas['course']) for tup in cursor.fetchall()]
         def year():
             query = "SELECT DISTINCT(year) from COURSE"
             cursor.execute(query)

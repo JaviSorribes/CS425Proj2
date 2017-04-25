@@ -130,6 +130,8 @@
 <!--THE USERS BOOKS ARE HANDLED HERE-->
     <div id="books" class="tab-pane fade">
       <h3>Book Database</h3>
+        <p>Track the books for your courses.
+        </p>
       <form class="form-inline">
           <div class="form-group">
             <input type="text" class="form-control" placeholder="Book Name"> 
@@ -141,19 +143,21 @@
             <tr>
               <th>Name</th>
               <th>ISBN #</th>
-              <th>Subject</th>
+              <th>Course</th>
               <th>Quantity Available</th>
               <th>Cost</th>
             </tr>
           </thead>
           <tbody>
+            {% for book in booksforteacher(user['teacherid']) %}
             <tr>
-              <th>Introduction to Algorithms</th>
-              <th>220-9579-1105</th>
-              <th>Computer Science</th>
-              <th>30</th>
-              <th>$100.00</th>
+              <th>{{ book['title'] }}</th>
+              <th>{{ book['isbn'] }}</th>
+              <th>{{ book['coursename'] }} {{ book['coursesemester'].capitalize() }} {{ book['courseyear'] }}</th>
+              <th>{{ book['quantity'] }}</th>
+              <th>{{ book['cost'] }}</th>
             </tr>
+           {% endfor %}
           </tbody>
         </table>
     </div>
@@ -161,7 +165,7 @@
 <!--THE STUDENT FEES TAB IS HANDLED HERE-->
     <div id="students" class="tab-pane fade">
       <h3>Your Students</h3>
-        <p>Track your students and assign books.
+        <p>Track your students.
         </p>
           <form class="form-inline">
           <div class="form-group">
@@ -172,21 +176,29 @@
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
+              <th>Course</th>
               <th>Student ID</th>
               <th>First Name</th>
               <th>Last Name</th>
-              <th>Amount Due</th>
-              <th>Amount Due</th>
+              <th>Has Book</th>
             </tr>  
           </thead>
           <tbody>
+            {% set course = [] %}
+            {% for stud in studentsforteacher(user['teacherid']) %}
             <tr>
-              <th>S0123456789</th>
-              <th>002-1156-2275</th>
-              <th>World History</th>
-              <th>May-22-2016</th>
-              <th>$89.99</th>
+              {% if course != [stud['name'],stud['semester'],stud['year']] %}
+                <th>{{ stud['name'] }} {{ stud['semester'].capitalize() }} {{ stud['year'] }}</th>
+                {% set course = [stud['name'],stud['semester'],stud['year']] %}
+              {% else %}
+                <th></th>
+              {% endif %}
+              <th>{{ stud['studentid'] }}</th>
+              <th>{{ stud['firstname'] }}</th>
+              <th>{{ stud['lastname'] }}</th>
+              <th></th>
             </tr>
+            {% endfor %}
             <tr>
               <th></th>
               <th></th>
