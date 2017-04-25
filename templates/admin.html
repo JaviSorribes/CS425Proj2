@@ -41,7 +41,7 @@
         <li class="active"><a data-toggle="tab" href="#overview">Overview</a></li>
         <li><a data-toggle="tab" href="#books">Books</a></li>
         <li><a data-toggle="tab" href="#users">Manage Users</a></li>
-        <li><a data-toggle="tab" href="#courses">Manage Courses</a></li>
+        <li><a data-toggle="tab" href="#courses">Course Books</a></li>
         <li><a data-toggle="tab" href="#studentcheckout">Checkout Report Student</a></li>
         <li><a data-toggle="tab" href="#overduefees">Overdue Fees</a></li>
     </ul> 
@@ -327,7 +327,7 @@
 
 <!--THE RELEVANT CONTACT INFORMATION IS HANDLED HERE-->
     <div id="courses" class="tab-pane fade">
-        <h3>Manage Courses</h3>
+        <h3>Course Books</h3>
         <table class="table table-hover table-bordered table-default">
           <thead>
             <tr>
@@ -338,7 +338,6 @@
                 <td>Check-Out Date</td>
                 <td>Due Date</td>
                 <td>Overdue?</td>
-                <td>Email</td>
             </tr>
           </thead>
           {% for book in allbookscourses() %}
@@ -350,8 +349,7 @@
               <td>{{ book['firstname'] }} {{book['lastname']}}</td>
               <td>{{ book['datecheckedout'] }}</td>
               <td>{{ book['duedate'] }}</td>
-              <td></td>
-              <td><button type="email" class="btn btn-default">Contact</button></td>
+              <td>{{ 'Yes' if book['duedate']<today else 'No' }}</td>
           </tbody>
           {%  endfor %}
         </table>
