@@ -41,9 +41,10 @@
       <li><a data-toggle="tab" href="#overview">Overview</a></li>
       <li class="active"><a data-toggle="tab" href="#books">Books</a></li>
       <li><a data-toggle="tab" href="#users">Manage Users</a></li>
-      <li><a data-toggle="tab" href="#courses">Manage Courses</a></li>
+      <li><a data-toggle="tab" href="#courses">Course Books</a></li>
         <li><a data-toggle="tab" href="#studentcheckout">Checkout Report Student</a></li>
         <li><a data-toggle="tab" href="#overduefees">Overdue Fees</a></li>
+        <li><a data-toggle="tab" href="#managecourses">Manage Courses</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right" style="padding-right:10px">
       <p class="navbar-text">Signed in as: Admin</p>
@@ -457,6 +458,56 @@
           </tbody>
           {%  endfor %}
         </table>
+    </div>
+        <div id="managecourses" class="tab-pane fade">
+        <h3>Manage Users</h3>
+
+            <br><h4>Add A Course</h4>
+            <form action="/add_course/" class="form-inline">
+                <input type="text" class="form-control" name="c_name" placeholder="course name" required>
+                <input type="text" class="form-control" name="c_year" placeholder="course year" required>
+                <input type="text" class="form-control" name="c_sem" placeholder="course semester" required>
+                <label for="sel1">Teacher ID</label>
+                <select class="form-control" name="c_tid" id="sel1">
+                    {% for data in allteachers() %}
+                        <option>{{ data['teacherid'] }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-success">ADD NEW COURSE</button>
+            </form><br>
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>name</th>
+                        <th>year</th>
+                        <th>semester</th>
+                        <th>teacherid</th>
+                        <th>Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in allcourses() %}
+                    <tr>
+                        <th>{{ data['name'] }}</th>
+                        <th>{{ data['year'] }}</th>
+                        <th>{{ data['semester'] }}</th>
+                        <th>{{ data['teacherid'] }}</th>
+                        <th class="collapse in">
+                            <a href="#course{{ data['name'] }}course{{data['year']}}course{{data['semester']}}" data-parent="#users" class="btn btn-info" data-toggle="collapse">Change Teacher</a>
+                            <button type="submit" class="btn btn-danger"><a style="color:white" href="/del_course/{{ data['name'] }}/{{data['year']}}/{{data['semester']}}">REMOVE COURSE</a></button>
+                            <form action="/change_cteacher/{{ data['name'] }}/{{data['year']}}/{{data['semester']}}" class="form-inline collapse" id="course{{ data['name'] }}course{{data['year']}}course{{data['semester']}}">
+                                <select class="form-control" name="new_cteachid{{ data['name'] }}{{data['year']}}{{data['semester']}}">
+                                    {%  for data2 in allteachers() %}
+                                        <option>{{ data2['teacherid'] }}</option>>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn btn-danger">Change Teacher</button>
+                            </form>
+                        </th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
     </div>
   </div>
   </div>
