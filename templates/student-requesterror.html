@@ -78,29 +78,32 @@
 <nav class="navbar navbar-fixed-top">
   <div class="container bg-info">
     <ul class="nav navbar-nav">
-      <p class="navbar-text">High School Library</p>
+      <p class="navbar-text">RAJE High School Library</p>
       <li class="active"><a data-toggle="tab" href="#overview">Overview</a></li>
       <li><a data-toggle="tab" href="#books">Books</a></li>
       <li><a data-toggle="tab" href="#fees">Your Fees</a></li>
       <li><a data-toggle="tab" href="#contact">Contact Us</a></li>
       <li><a data-toggle="tab" href="#userInfo">User Info</a></li>
-    </ul> 
+    </ul>
     <ul class="nav navbar-nav navbar-right" style="padding-right:10px">
       <p class="navbar-text">Signed in as: Student</p>
         <li><button class="btn navbar-btn"><a href="/">Logout</a></button></li>
     </ul>
   </div>
-  
+
 </nav>
 <div class="container bg-muted" style="padding:0px; background-color:white">
     <div class="tab-content" style="margin-top:30px">
-    
-<!--THE OVERVIEW FOR THE USER IS SHOWN HERE-->    
+
+<!--THE OVERVIEW FOR THE USER IS SHOWN HERE-->
     <div id="overview" class="tab-pane fade in active">
       <h3>Overview</h3>
+        <p>A brief summary of your account, {{ user["firstname"] }}
+        </p>
         <p>Your advisor is {{findadvisor(user['advisorid'])[0]['firstname']}} {{findadvisor(user['advisorid'])[0]['lastname']}}
         </p>
-      <h3>ERROR REQUESTING BOK. IS YOUR STUFF ok?!!!!!</h3>
+      <h3>Request failed.</h3>
+       <h3>Is your course information correct?</h3>
       <h3>Request a book</h3>
       <form action="/request_book_student" class="form-inline">
           <div class="form-group">
@@ -140,7 +143,8 @@
               <th class="col-sm-1">Course</th>
               <th class="col-sm-1">Check Out Date</th>
               <th class="col-sm-1">Due Date</th>
-              <th class="col-sm-2">Cost to Replace</th>
+              <th class="col-sm-1">Cost to Replace</th>
+			  <th class="col-sm-1">Return</th>
             </tr>
           </thead>
           <tbody>
@@ -152,19 +156,20 @@
               <th>{{ data['coursename'] }}</th>
               <th>{{ data['datecheckedout'] }}</th>
               <th>{{ data['duedate'] }}</th>
-              <th>{{ data['cost'] }}<button><a href="/borrow_book/{{ data['bookid'] }}">Return</a></button></th>
+              <th>{{ data['cost'] }}</th>
+			  <th><button><a href="/return_book/{{user['studentid']}}/{{ data['bookid'] }}">Return</a></button><button><a href="/renew_book/{{user['studentid']}}/{{data['bookid']}}">Renew</a></button></th>
             </tr>
             {% endif %}
             {% endfor %}
           </tbody>
         </table>
-        
+
         <h3>Available Books</h3>
         <p>The following books are available for checkout from your account</p>
         <!--
         <form class="form-inline">
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="Enter Book Name"> 
+            <input type="text" class="form-control" placeholder="Enter Book Name">
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
@@ -175,9 +180,9 @@
               <th class="col-sm-3">Name</th>
               <th class="col-sm-1">ISBN #</th>
               <th class="col-sm-1">Course</th>
-              <th class="col-sm-1">Check Out Date</th>
-              <th class="col-sm-1">Due Date</th>
-              <th class="col-sm-2">Cost to Replace</th>
+              <th class="col-sm-1">Year</th>
+              <th class="col-sm-1">Semester</th>
+              <th class="col-sm-2">Borrow</th>
             </tr>
           </thead>
           <tbody>
@@ -186,20 +191,20 @@
               <th>{{ data['title'] }}</th>
               <th>{{ data['isbn'] }}</th>
               <th>{{ data['coursename'] }}</th>
-              <th>Check Out Date</th>
-              <th>Due Date</th>
-              <th>Cost to Replace<button><a href="/borrow_book/{{ user['studentid'] }}/{{ data['bookid'] }}">Borrow</a></button></th>
+              <th>{{ data['courseyear'] }}</th>
+              <th>{{ data['coursesemester'] }}</th>
+              <th><button><a href="/borrow_book/{{ user['studentid'] }}/{{ data['bookid'] }}">Borrow</a></button></th>
               <!--Student will be able to only borrow books that have been assigned-->
             </tr>
             {% endfor %}
           </tbody>
         </table>
     </div>
-    
+
 <!--THE STUDENT FEES TAB IS HANDLED HERE-->
     <div id="fees" class="tab-pane fade">
       <h3>Your Fees</h3>
-        <p>You have a total of <em>BOOKTOTAL</em> books overdue for a cost of <em>$TOTALFEE</em>.</p>
+        <p>You have a total of <em>{{ numbooksoverdue(user['studentid']) }}</em> books overdue for a cost of <em>${{ user['amountdue'] }}</em>.</p>
         <p>You must handle all of your fees in order to graduate.
         </p>
         <table class="table table-bordered table-hover">
@@ -210,7 +215,7 @@
               <th class="col-sm-2">Course</th>
               <th class="col-sm-1">Due Date</th>
               <th class="col-sm-2">Amount Due</th>
-            </tr>  
+            </tr>
           </thead>
           <tbody>
             {% for data in allbooksstudentfees(user['studentid']) %}
@@ -220,7 +225,7 @@
               <th>{{ data['isbn'] }}</th>
               <th>{{ data['coursename'] }}</th>
               <th>{{ data['duedate'] }}</th>
-              <th>{{ data['cost'] }}<button><a href="/borrow_book/{{ data['bookid'] }}">Return</a></button></th>
+              <th>{{ data['cost'] }}<button><a href="/return_book/{{ user['studentid'] }}/{{ data['bookid'] }}">Return</a></button></th>
             </tr>
             {% endif %}
             {% endfor %}
@@ -228,7 +233,7 @@
               <th></th>
               <th></th>
               <th></th>
-              <th>Total DUE: {{ allbooksstudentfees(user['studentid'])|sum(attribute='cost')}}</th>
+              <th>Total DUE: {{ user['amountdue'] }}</th>
               <th></th>
             </tr>
           </tbody>
@@ -239,23 +244,29 @@
     <div id="contact" class="tab-pane fade">
       <!--<h3 style="text-align:center">Useful Contacts</h3>-->
       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-      <h4><u><br>CONTACT 1</u></h4>
+      <h4><u><br>Eldon Nakagawa</u></h4>
         <p>
-          Contact for disputes regarding lost books<br>
-          Phone #:(PHONE 1) <br>
-          Email:(EMAIL 1)
+          Contact for disputes regarding lost books.<br>
+          Phone #: 555-872-2011 <br>
+          Email: enakagawa@raje.edu
         </p>
-      <h4><u><br>CONTACT 2</u></h4>
+      <h4><u><br>Aditya Parakh</u></h4>
         <p>
           Contact to report an issue to the school library.<br>
-          Phone #:(PHONE 2) <br>
-          Email:(EMAIL 2)
+          Phone #: 872-555-1213 <br>
+          Email: aparakh@raje.edu
         </p>
-      <h4><u><br>CONTACT 3</u></h4>
+      <h4><u><br>Ricky Nguyen</u></h4>
         <p>
           Contact for other questions.<br>
-          Phone #:(PHONE 3) <br>
-          Email:(EMAIL 3)
+          Phone #: 789-312-5555 <br>
+          Email: rnguyen@raje.edu
+        </p>
+      <h4><u><br>Javier Sorribes</u></h4>
+        <p>
+          Contact for course and book policies.<br>
+          Phone #: 555-555-5555 <br>
+          Email: jsorribes@raje.edu
         </p>
       </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding-top:50px">
@@ -285,7 +296,7 @@
             <tr>
               <th>Friday</th>
               <th>7:00am - 5:00pm</th>
-            </tr>                 
+            </tr>
             <tr>
               <th>Saturday</th>
               <th>Closed</th>
@@ -294,17 +305,16 @@
         </table>
         </div>
     </div>
-    
+
 <!--THE 0 INFORMATION IS HANDLED HERE-->
     <div id="userInfo" class="tab-pane fade">
       <h3>Keep your contact information updated to avoid missing important dates!</h3>
         <p>
-          {% set printname = {'foo':True} %}
+          {% set currparentid = -1 %}
           {% for data in parentcontacts(user['studentid']) %}
-          {% if printname.foo %}
-          {{ data['firstname'] }} {{ data['lastname'] }}<br>
-          {% if printname.update({'foo':False}) %}
-          {% endif %}
+          {% if currparentid != data['parentid'] %}
+          <br>{{ data['firstname'] }} {{ data['lastname'] }}<br>
+          {% set currparentid = data['parentid'] %}
           {% endif %}
           {{ data['contact'] }}<br>
           {% endfor %}

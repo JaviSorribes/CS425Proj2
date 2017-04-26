@@ -78,108 +78,142 @@
 <nav class="navbar navbar-fixed-top">
   <div class="container bg-info">
     <ul class="nav navbar-nav">
-      <p class="navbar-text">High School Library</p>
+      <p class="navbar-text">RAJE High School Library</p>
       <li class="active"><a data-toggle="tab" href="#overview">Overview</a></li>
       <li><a data-toggle="tab" href="#books">Books</a></li>
-      <li><a data-toggle="tab" href="#students">Manage Students</a></li>
-      <li><a data-toggle="tab" href="#courses">Manage Courses</a></li>
-    </ul> 
+      <li><a data-toggle="tab" href="#students">Your Students</a></li>
+      <li><a data-toggle="tab" href="#courses">Your Courses</a></li>
+    </ul>
     <ul class="nav navbar-nav navbar-right" style="padding-right:10px">
       <p class="navbar-text">Signed in as: Teacher</p>
         <li><button class="btn navbar-btn"><a href="/">Logout</a></button></li>
     </ul>
   </div>
-  
+
 </nav>
 <div class="container bg-muted" style="padding:0px; background-color:white">
     <div class="tab-content" style="margin-top:30px">
-    
-<!--THE OVERVIEW FOR THE USER IS SHOWN HERE-->    
+
+<!--THE OVERVIEW FOR THE USER IS SHOWN HERE-->
     <div id="overview" class="tab-pane fade in active">
       <h3>Overview</h3>
-        <p>A brief summary of your account
+        <p>A brief summary of your account, {{ user["firstname"] }}
         </p>
-      <h3>Successfully requested book!</h3>
-      <h3>Request another book!</h3>
+      <h3>Successfully completed request.</h3>
+      <h3>Request another book</h3>
       <form action="/request_book_teacher" class="form-inline">
           <div class="form-group">
-            <input type="text" name="bookisbn" class="form-control" placeholder="Book ISBN">
-            <input type="text" name="coursename" class="form-control" placeholder="Course Name">
-            <input type="text" name="courseyear" class="form-control" placeholder="Course Year">
-            <input type="text" name="coursesem" class="form-control" placeholder="Course Semester">
+            <input type="text"  name="bookisbn" class="form-control" placeholder="Book ISBN">
+            <input list = "course_list" type="text" name="coursename" class="form-control" placeholder="Course Name">
+            <input list = "year_list" type="text" name="courseyear" class="form-control" placeholder="Course Year">
+            <input list = "semester_list"type="text" name="coursesem" class="form-control" placeholder="Course Semester">
             <input type="number" name="quantity" class="form-control" placeholder="Quantity">
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
+       <datalist id = "course_list">
+            {%  for data in courses() %}
+                <option value="{{ data['name'] }}">
+            {% endfor %}
+        </datalist>
+        <datalist id = "year_list">
+            {%  for data in year() %}
+                <option value="{{ data['year'] }}">
+            {% endfor %}
+        </datalist>
+      <datalist id = "semester_list">
+            {%  for data in semester() %}
+                <option value="{{ data['semester'] }}">
+            {% endfor %}
+        </datalist>
     </div>
 
 <!--THE USERS BOOKS ARE HANDLED HERE-->
     <div id="books" class="tab-pane fade">
       <h3>Book Database</h3>
+        <p>Track the books for your courses.
+        </p>
+    <!-- Too complicated rn
       <form class="form-inline">
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="Book Name"> 
+            <input type="text" class="form-control" placeholder="Book Name">
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
+    -->
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
               <th>Name</th>
               <th>ISBN #</th>
-              <th>Subject</th>
+              <th>Course</th>
               <th>Quantity Available</th>
               <th>Cost</th>
             </tr>
           </thead>
           <tbody>
+            {% for book in booksforteacher(user['teacherid']) %}
             <tr>
-              <th>Introduction to Algorithms</th>
-              <th>220-9579-1105</th>
-              <th>Computer Science</th>
-              <th>30</th>
-              <th>$100.00</th>
+              <th>{{ book['title'] }}</th>
+              <th>{{ book['isbn'] }}</th>
+              <th>{{ book['coursename'] }} {{ book['coursesemester'].capitalize() }} {{ book['courseyear'] }}</th>
+              <th>{{ book['quantity'] }}</th>
+              <th>{{ book['cost'] }}</th>
             </tr>
+           {% endfor %}
           </tbody>
         </table>
     </div>
-    
+
 <!--THE STUDENT FEES TAB IS HANDLED HERE-->
     <div id="students" class="tab-pane fade">
       <h3>Your Students</h3>
-        <p>Track your students and assign books.
+        <p>You are the advisor for the students listed below.
         </p>
+        <!---
           <form class="form-inline">
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="Enter Student ID #"> 
+            <input type="text" class="form-control" placeholder="Enter Student ID #">
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
+        -->
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
               <th>Student ID</th>
               <th>First Name</th>
               <th>Last Name</th>
-              <th>Amount Due</th>
-              <th>Amount Due</th>
-            </tr>  
+              <th>Parent Name</th>
+              <th>Parent Contact</th>
+            </tr>
           </thead>
           <tbody>
-            <tr>
-              <th>S0123456789</th>
-              <th>002-1156-2275</th>
-              <th>World History</th>
-              <th>May-22-2016</th>
-              <th>$89.99</th>
-            </tr>
-            <tr>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-            </tr>
+            {% set currstudentid = -1 %}
+            {% for stud in studentsforadvisor(user['teacherid']) %}
+                {% set currparentid = -1 %}
+                {% for data in parentcontacts(stud['studentid']) %}
+                <tr>
+                    {% if currstudentid != stud['studentid'] %}
+                        <th>{{ stud['studentid'] }}</th>
+                        <th>{{ stud['firstname'] }}</th>
+                        <th>{{ stud['lastname'] }}</th>
+                        {% set currstudentid = stud['studentid'] %}
+                    {% else %}
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    {% endif %}
+                    {% if currparentid != data['parentid'] %}
+                        <th>{{ data['firstname'] }} {{ data['lastname'] }}</th>
+                        {% set currparentid = data['parentid'] %}
+                     {% else %}
+                        <th></th>
+                    {% endif %}
+                        <th>{{ data['contact'] }}</th>
+                </tr>
+                {% endfor %}
+            {% endfor %}
           </tbody>
         </table>
     </div>
@@ -187,33 +221,47 @@
 <!--THE RELEVANT CONTACT INFORMATION IS HANDLED HERE-->
     <div id="courses" class="tab-pane fade">
       <!--<h3 style="text-align:center">Useful Contacts</h3>-->
-      <h3>Manage Courses</h3>
+      <h3>Your Courses</h3>
+        <p>Track your courses and students enrolled.
+        </p>
+        <!--
         <form class="form-inline">
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="Enter Course"> 
+            <input type="text" class="form-control" placeholder="Enter Course">
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
-      <table class="table table-hover table-bordered table-default">
+        -->
+        <table class="table table-bordered table-hover">
           <thead>
             <tr>
-              <td>Course</td>
-              <td>Student ID</td>
-              <td>Book Name</td>
-              <td>Check-Out Date</td>
-              <td>Due Date</td>
-              <td>Overdue?</td>
-              <td>Email</td>
+              <th>Course</th>
+              <th>Total Enrollment</th>
+              <th>Student ID</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Has Book</th>
             </tr>
           </thead>
           <tbody>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td><button type="email" class="btn btn-default">Contact</button></td>
+            {% set course = [] %}
+            {% set students = studentsforteacher(user['teacherid']) %}
+            {% for stud in students %}
+            <tr>
+              {% if course != [stud['name'],stud['semester'],stud['year']] %}
+                {% set course = [stud['name'],stud['semester'],stud['year']] %}
+                <th>{{ stud['name'] }} {{ stud['semester'].capitalize() }} {{ stud['year'] }}</th>
+                <th>{{ enrollment(students,course) }}</th>
+              {% else %}
+                <th></th>
+                <th></th>
+              {% endif %}
+              <th>{{ stud['studentid'] }}</th>
+              <th>{{ stud['firstname'] }}</th>
+              <th>{{ stud['lastname'] }}</th>
+              <th>{{ hasbookforcourse(stud['studentid'],stud['name'],stud['semester'],stud['year']) }}</th>
+            </tr>
+            {% endfor %}
           </tbody>
         </table>
     </div>
