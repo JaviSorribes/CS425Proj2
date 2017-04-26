@@ -1,6 +1,6 @@
 # CS425Proj2
 Python Flask database-backed web app for a school library.
-- Current most updated branch: https://github.com/JaviSorribes/CS425Proj2
+- Current most updated branch: https://github.com/JaviSorribes/CS425Proj2 (master)
 
 ## Requirements:
 - Python 3.4 or later
